@@ -1,0 +1,20 @@
+---
+const navItems = [
+  { href: '#home', label: 'Home' },
+  { href: '#services', label: 'Services' },
+  { href: '#workflow', label: 'Workflow' },
+  { href: '#about', label: 'About' },
+];
+---
+
+<aside class="sidebar">
+  <img src="/images/logo_white.png" alt="That's it Marketing Logo" class="logo" />
+  <nav class="nav">
+    {navItems.map((item) => (
+      <a href={item.href} class={item.href === '#home' ? 'active' : ''}>
+        {item.label}
+      </a>
+    ))}
+  </nav>
+  <button class="cookie-btn">Cookie-Einstellungen</button>
+</aside>

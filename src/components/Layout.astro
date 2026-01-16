@@ -1,0 +1,31 @@
+---
+import '../styles/global.css';
+import '../scripts/navigation.js';
+
+export interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "Tailored Websites for Growing Businesses | That's it Marketing",
+  description = "Discover how That's it Marketing helps businesses grow with personalized website configurations, conversion‑driven landing pages, structured funnels and full web solutions. Join our satisfied clients and start your project today!"
+} = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

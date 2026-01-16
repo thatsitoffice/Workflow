@@ -1,0 +1,165 @@
+---
+const onboardingPhases = [
+  {
+    number: 1,
+    title: 'Erklärung der Zusammenarbeit',
+    description: 'In dieser Phase stellen wir sicher, dass alle Erwartungen klar kommuniziert sind und Sie genau wissen, was auf Sie zukommt.',
+    items: [
+      'Onboarding-Videos mit detaillierten Erklärungen',
+      'Klare Definition Ihrer Aufgaben und Verantwortlichkeiten',
+      'Roadmap und Zeitplan werden vorgestellt',
+      'Art der Betreuung wird transparent gemacht',
+      'Vorinformationen für den Kickoff-Call',
+    ],
+  },
+  {
+    number: 2,
+    title: 'Informationen einholen',
+    description: 'Wir sammeln alle notwendigen Informationen für Ihr Projekt – strukturiert und effizient.',
+    items: [
+      'Ausführlicher Onboarding-Fragebogen',
+      'Video-Erklärungen für komplexe Fragen',
+      'Direkte Bereitstellung von Zugangsdaten',
+      'Sammlung von Logos, Bildern und Dateien',
+      'Definition von Branding und Corporate Identity',
+    ],
+  },
+  {
+    number: 3,
+    title: 'Zusammenarbeits-Setup',
+    description: 'Das technische Setup wird gemeinsam eingerichtet, um reibungslose Zusammenarbeit zu gewährleisten.',
+    items: [
+      'Technische Einrichtung aller notwendigen Tools',
+      'Google Docs Masterdatei wird erstellt',
+      'Kommunikationskanäle werden festgelegt',
+      'Zugänge für Google Search Console & Business Account',
+      'Provider-Daten werden gesichert',
+    ],
+  },
+  {
+    number: 4,
+    title: 'Inhaltliches Kickoff',
+    description: 'In diesem Call tauchen wir tief in die inhaltlichen Details ein und erstellen einen genauen Fahrplan.',
+    items: [
+      'Genauer Fahrplan für Ihr Projekt',
+      'Setup der wichtigsten Elemente',
+      'Definition von Zielgruppe und USPs',
+      'Festlegung der Tonalität',
+      'Klärung der Top 3 Fragen direkt im Call',
+    ],
+  },
+  {
+    number: 5,
+    title: 'Intensiv-Begleitung',
+    description: 'Wir nutzen die Anfangsmotivation optimal und begleiten Sie aktiv bis zu den ersten Erfolgen.',
+    items: [
+      'Regelmäßige Calls und Nachhaken',
+      'Schnelle Feedback-Schleifen',
+      'Unterstützung bis zu den Activation-Points',
+      'Momentum wird optimal genutzt',
+      'Kontinuierliche Optimierung',
+    ],
+  },
+];
+
+const projectPhases = [
+  { name: 'Konzept', description: 'Strategische Planung', icon: 'concept' },
+  { name: 'Design', description: 'Visuelle Umsetzung', icon: 'design' },
+  { name: 'Umsetzung', description: 'Technische Realisierung', icon: 'implementation' },
+  { name: 'Feedback', description: 'Optimierung & Revisionen', icon: 'feedback' },
+  { name: 'Launch', description: 'Go-Live & Übergabe', icon: 'launch' },
+];
+
+const processDetails = [
+  {
+    title: 'Was ist enthalten?',
+    items: [
+      'Komplette Projektbegleitung',
+      'Festgelegte Anzahl an Revisionen',
+      'Strukturiertes Feedback-System',
+      'Klar definierte Reaktionszeiten',
+      'Launch-Checkliste',
+    ],
+  },
+  {
+    title: 'Feedback-Prozess',
+    items: [
+      'Feedback wird gebündelt gesammelt',
+      'Review im Call für schnelle Schleifen',
+      'Klare Anleitungen für Ihr Feedback',
+      'Beidseitige Reaktionszeiten vereinbart',
+      'Optimierung in jeder Phase',
+    ],
+  },
+  {
+    title: 'Launch & Übergabe',
+    items: [
+      'Umfassende Launch-Checkliste',
+      'Schulung für Sie und Ihr Team',
+      'Dokumentation aller Funktionen',
+      'Wartung & Support-Optionen',
+      'Möglichkeiten für Weiterentwicklung',
+    ],
+  },
+];
+
+---
+
+<section class="workflow" id="workflow">
+  <div class="container">
+    <h2>Unser Webseiten-Workflow</h2>
+    <p class="subtitle">
+      Von der ersten Kontaktaufnahme bis zum erfolgreichen Launch – wir begleiten Sie durch einen strukturierten Prozess, der Transparenz, Effizienz und exzellente Ergebnisse garantiert.
+    </p>
+
+    <!-- Onboarding Process -->
+    <div class="onboarding-timeline">
+      <h3>Der Onboarding-Prozess</h3>
+      <div class="timeline">
+        {onboardingPhases.map((phase) => (
+          <div class="timeline-item">
+            <div class="timeline-number">{phase.number}</div>
+            <div class="timeline-content">
+              <h4>{phase.title}</h4>
+              <p>{phase.description}</p>
+              <ul>
+                {phase.items.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Project Phases -->
+    <div class="project-phases">
+      <h3>Die Projektphasen</h3>
+      <div class="phases-flow">
+        {projectPhases.map((phase) => (
+          <div class="phase-step">
+            <div class="phase-icon">
+              <svg viewBox="0 0 16 16" aria-hidden="true" set:html={getIcon(phase.icon)} />
+            </div>
+            <h4>{phase.name}</h4>
+            <p>{phase.description}</p>
+          </div>
+        ))}
+      </div>
+
+      <div class="process-details">
+        {processDetails.map((detail) => (
+          <div class="process-card">
+            <h4>{detail.title}</h4>
+            <ul>
+              {detail.items.map((item) => (
+                <li>{item}</li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
