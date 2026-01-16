@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # That's It Marketing - Workflow Landing Page
 
 Eine moderne Landing Page für That's It Marketing, gebaut mit Astro und gehostet auf Cloudflare Pages.
@@ -80,7 +79,3 @@ npm run build
 - Die Bilder müssen im `public/images/` Ordner liegen
 - Cloudflare Pages unterstützt automatisch SSR mit dem Cloudflare Adapter
 - Das Projekt nutzt Astro 4.x mit Cloudflare Adapter
-=======
-# Workflow
-Webseitenworkflow Intern
->>>>>>> 32b19fc7be0a9c5afea623e86ff3f6b9247fe715
