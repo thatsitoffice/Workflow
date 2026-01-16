@@ -15,6 +15,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 // Cookie button functionality
 const cookieBtn = document.querySelector('.cookie-btn');
 const mobileCookieBtn = document.querySelector('.mobile-cookie-btn');
+const desktopCookieIcon = document.querySelector('.desktop-cookie-btn-icon');
 
 function handleCookieClick() {
   alert('Cookie-Einstellungen werden geöffnet...');
@@ -27,6 +28,10 @@ if (cookieBtn) {
 
 if (mobileCookieBtn) {
   mobileCookieBtn.addEventListener('click', handleCookieClick);
+}
+
+if (desktopCookieIcon) {
+  desktopCookieIcon.addEventListener('click', handleCookieClick);
 }
 
 // Active section detection for sidebar navigation

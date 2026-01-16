@@ -730,8 +730,37 @@ a:hover {
   font-size: 0.8rem;
 }
 
-.mobile-cookie-btn {
+.mobile-cookie-btn.cookie-btn-icon,
+.desktop-cookie-btn-icon.cookie-btn-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  background: #000;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s ease;
+  padding: 0;
   display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.mobile-cookie-btn.cookie-btn-icon:hover,
+.desktop-cookie-btn-icon.cookie-btn-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5);
+}
+
+.mobile-cookie-btn.cookie-btn-icon svg,
+.desktop-cookie-btn-icon.cookie-btn-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: #fff;
 }
 
 /* RESPONSIVE */
@@ -807,9 +836,14 @@ a:hover {
     display: none !important;
   }
   
+  .sidebar {
+    margin-bottom: 25px;
+  }
+  
   .main-content {
     margin-left: 0;
     width: 100%;
+    padding-bottom: 90px;
   }
   
   .hero h1 {
@@ -817,7 +851,11 @@ a:hover {
   }
   
   .hero .logo {
-    width: 280px;
+    display: none;
+  }
+  
+  .hero .content {
+    padding-top: 25px;
   }
   
   .feature {
@@ -897,26 +935,25 @@ a:hover {
     padding: 2rem 1.5rem;
   }
   
-  .mobile-cookie-btn {
-    display: block;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    width: 100%;
-    background: var(--primary-color);
-    color: var(--dark-bg);
-    border: none;
-    padding: 1rem;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    z-index: 1000;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
-    transition: all 0.3s ease;
+  .mobile-cookie-btn.cookie-btn-icon {
+    display: flex;
   }
   
-  .mobile-cookie-btn:hover {
-    background: #c58e36;
+  .desktop-cookie-btn-icon.cookie-btn-icon {
+    display: none !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-cookie-btn.cookie-btn-icon {
+    display: none !important;
+  }
+  
+  .desktop-cookie-btn-icon.cookie-btn-icon {
+    display: flex !important;
+  }
+  
+  .desktop-cookie-btn-text {
+    display: block;
   }
 }
