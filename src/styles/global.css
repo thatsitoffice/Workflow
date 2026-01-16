@@ -841,10 +841,6 @@ a:hover {
     font-size: 2.5rem;
   }
   
-  .hero h1 .no-break {
-    white-space: nowrap;
-  }
-  
   .hero .logo {
     width: 280px;
   }
@@ -854,7 +850,7 @@ a:hover {
   }
   
   .hero .cta-btn {
-    margin-bottom: 3rem;
+    margin-bottom: 6rem;
   }
   
   .feature {
