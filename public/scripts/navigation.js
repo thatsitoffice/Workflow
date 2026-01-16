@@ -14,11 +14,19 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // Cookie button functionality
 const cookieBtn = document.querySelector('.cookie-btn');
+const mobileCookieBtn = document.querySelector('.mobile-cookie-btn');
+
+function handleCookieClick() {
+  alert('Cookie-Einstellungen werden geöffnet...');
+  // Here you can implement actual cookie settings functionality
+}
+
 if (cookieBtn) {
-  cookieBtn.addEventListener('click', function() {
-    alert('Cookie-Einstellungen werden geöffnet...');
-    // Here you can implement actual cookie settings functionality
-  });
+  cookieBtn.addEventListener('click', handleCookieClick);
+}
+
+if (mobileCookieBtn) {
+  mobileCookieBtn.addEventListener('click', handleCookieClick);
 }
 
 // Active section detection for sidebar navigation
