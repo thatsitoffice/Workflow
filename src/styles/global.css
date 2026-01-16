@@ -609,15 +609,20 @@ a:hover {
 }
 
 .about h2,
-.about .about-title {
+.about .about-title-desktop,
+.about .about-title-mobile {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
   font-weight: 700;
   color: var(--text-color);
 }
 
-.about .about-title {
+.about .about-title-mobile {
   display: none;
+}
+
+.about .about-title-desktop {
+  display: block;
 }
 
 .about p {
@@ -733,6 +738,41 @@ a:hover {
   .feature {
     flex: 1 1 calc(50% - 2rem);
   }
+  
+  /* Tablet: About Section - Einspaltige Ansicht */
+  .about {
+    padding: 4rem 1rem;
+  }
+  
+  .about .container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .about .about-title-mobile {
+    display: block;
+    order: 1;
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 2rem;
+  }
+  
+  .about .image {
+    order: 2;
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+  
+  .about .content {
+    order: 3;
+    padding-left: 0;
+    width: 100%;
+  }
+  
+  .about .about-title-desktop {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
@@ -747,17 +787,23 @@ a:hover {
     padding: 1rem;
     border-right: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    justify-content: flex-start;
   }
   
   .sidebar .nav {
     flex-direction: row;
     overflow-x: auto;
     gap: 0.5rem;
+    margin-bottom: 1rem;
   }
   
   .sidebar .nav a {
     white-space: nowrap;
     padding: 0.5rem 1rem;
+  }
+  
+  .sidebar .cookie-btn {
+    display: none !important;
   }
   
   .main-content {
@@ -777,29 +823,38 @@ a:hover {
     flex: 1 1 100%;
   }
   
-  .about .container {
-    flex-direction: column;
+  /* Mobile: About Section - Einspaltige Ansicht mit Titel zuerst */
+  .about {
+    padding: 3rem 1rem;
   }
   
-  .about .about-title {
+  .about .container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .about .about-title-mobile {
     display: block;
     order: 1;
+    text-align: center;
     margin-bottom: 1.5rem;
+    font-size: 1.75rem;
   }
   
   .about .image {
     order: 2;
-    flex: 1 1 100%;
-    margin-bottom: 2rem;
+    width: 100%;
+    margin-bottom: 1.5rem;
   }
   
   .about .content {
     order: 3;
-    flex: 1 1 100%;
     padding-left: 0;
+    width: 100%;
   }
   
-  .about .content h2 {
+  .about .about-title-desktop {
     display: none;
   }
   
