@@ -31,7 +31,7 @@ Write-Host "Initialisiere Git..."
 git init
 
 Write-Host "Füge Dateien hinzu..."
-git add package.json astro.config.mjs tsconfig.json .gitignore README.md SETUP.md GIT_PUSH.md src/ index.html
+git add .
 
 Write-Host "Erstelle Commit..."
 git commit -m "Initial commit: Astro Projekt Setup für Cloudflare Pages"
