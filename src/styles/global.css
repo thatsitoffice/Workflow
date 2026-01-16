@@ -808,36 +808,27 @@ a:hover {
 @media (max-width: 768px) {
   body {
     flex-direction: column;
+    overflow-x: hidden;
+  }
+  
+  body.menu-open {
+    overflow: hidden;
   }
   
   .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-    padding: 1rem;
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    justify-content: flex-start;
+    display: none;
   }
   
-  .sidebar .nav {
-    flex-direction: row;
-    overflow-x: auto;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
+  .mobile-menu-toggle {
+    display: flex;
   }
   
-  .sidebar .nav a {
-    white-space: nowrap;
-    padding: 0.5rem 1rem;
+  .mobile-menu-overlay {
+    display: block;
   }
   
-  .sidebar .cookie-btn {
-    display: none !important;
-  }
-  
-  .sidebar {
-    margin-bottom: 25px;
+  .mobile-sidebar {
+    display: flex;
   }
   
   .main-content {
@@ -851,7 +842,7 @@ a:hover {
   }
   
   .hero .logo {
-    display: none;
+    width: 280px;
   }
   
   .hero .content {
