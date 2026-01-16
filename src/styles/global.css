@@ -841,13 +841,10 @@ a:hover {
     font-size: 2.5rem;
   }
   
-<<<<<<< HEAD
   .hero h1 .no-break {
     white-space: nowrap;
   }
   
-=======
->>>>>>> d515ed93a91aff3b661ce3be4900e886ae7376e8
   .hero .logo {
     width: 280px;
   }
@@ -856,13 +853,10 @@ a:hover {
     padding-top: 25px;
   }
   
-<<<<<<< HEAD
   .hero .cta-btn {
     margin-bottom: 3rem;
   }
   
-=======
->>>>>>> d515ed93a91aff3b661ce3be4900e886ae7376e8
   .feature {
     flex: 1 1 100%;
   }
