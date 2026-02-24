@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="About – Linnavy Restaurant" description="Über uns: vollwertig-vegane Küche mit Leidenschaft.">
+  <section class="page-hero">
+    <h1 class="page-title">About</h1>
+    <p class="page-subtitle">Be kind to every kind.</p>
+  </section>
+
+  <div class="section about-content">
+    <div class="about-text">
+      <p>
+        Linnavy steht für pflanzliche Küche, die schmeckt und die Welt ein bisschen freundlicher macht.
+        Jedes Gericht ist zu 100 % vegan – ohne Kompromisse beim Genuss.
+      </p>
+      <p>
+        Wir setzen auf frische Zutaten, regionale Produkte wo möglich und Rezepte, die von der Levante
+        bis in deine Nachbarschaft reichen. Von Falafel über Bowls bis zu Suppen und Desserts:
+        hier isst du bewusst und lecker.
+      </p>
+      <p>
+        Ob du schon lange vegan lebst oder einfach neugierig bist – wir freuen uns auf dich.
+      </p>
+    </div>
+  </div>
+
+  <section class="section cta-section">
+    <a href="/menu/" class="btn">Zum Menu</a>
+    <a href="/contact/" class="btn btn-outline" style="margin-left: 1rem;">Kontakt</a>
+  </section>
+</Layout>
+
+<style>
+  .page-hero {
+    padding: 6rem 1.5rem 3rem;
+    text-align: center;
+    background: var(--color-surface);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .page-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  .page-subtitle {
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+  .about-text {
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .about-text p {
+    margin: 0 0 1.25rem;
+    font-size: 1.05rem;
+    line-height: 1.7;
+  }
+  .about-text p:last-child {
+    margin-bottom: 0;
+  }
+  .cta-section {
+    text-align: center;
+    padding-bottom: 4rem;
+  }
+</style>

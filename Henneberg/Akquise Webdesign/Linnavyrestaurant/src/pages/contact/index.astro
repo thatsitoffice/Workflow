@@ -1,0 +1,86 @@
+---
+import Layout from '../../layouts/Layout.astro';
+---
+
+<Layout title="Contact – Linnavy Restaurant" description="Adresse, Öffnungszeiten, Reservierung und Bestellung.">
+  <section class="page-hero">
+    <h1 class="page-title">Contact</h1>
+    <p class="page-subtitle">Reservierung, Abholung, Fragen – wir sind für dich da.</p>
+  </section>
+
+  <div class="section contact-grid">
+    <div class="contact-block">
+      <h2 class="contact-heading">Adresse</h2>
+      <p>
+        Linnavy Restaurant<br />
+        [Straße und Hausnummer]<br />
+        [PLZ Ort]
+      </p>
+    </div>
+    <div class="contact-block">
+      <h2 class="contact-heading">Öffnungszeiten</h2>
+      <p>
+        So – Do: 10:30 – 22:00 Uhr<br />
+        Fr: 10:30 – 23:00 Uhr<br />
+        Sa: 9:00 – 23:00 Uhr
+      </p>
+    </div>
+    <div class="contact-block">
+      <h2 class="contact-heading">Kontakt</h2>
+      <p>
+        Tel: [Telefonnummer]<br />
+        E-Mail: [E-Mail-Adresse]
+      </p>
+      <a href="/#order" class="btn">Order Now</a>
+    </div>
+  </div>
+
+  <section class="section cta-section">
+    <p class="section-subtitle">Reservierungen gerne telefonisch oder per E-Mail.</p>
+  </section>
+</Layout>
+
+<style>
+  .page-hero {
+    padding: 6rem 1.5rem 3rem;
+    text-align: center;
+    background: var(--color-surface);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .page-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  .page-subtitle {
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+  }
+  .contact-block {
+    background: var(--color-surface);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255,255,255,0.06);
+  }
+  .contact-heading {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.75rem;
+  }
+  .contact-block p {
+    margin: 0 0 1rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+  .cta-section {
+    text-align: center;
+    padding-bottom: 4rem;
+  }
+</style>

@@ -1,0 +1,121 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const categories = [
+  {
+    id: 'eat',
+    name: 'Essen',
+    items: [
+      { name: 'Falafel Bowl', desc: 'Kichererbsen-Falafel, Hummus, frisches Gemüse, Tahini', price: '12' },
+      { name: 'Loaded Gyro Fries', desc: 'Pommes mit Gyro-Style Seitan, Sauce, Kräuter', price: '11' },
+      { name: 'Green Goddess Soup', desc: 'Saisonale grüne Gemüsesuppe mit Kräutern', price: '8' },
+      { name: 'Baked Feta Pasta', desc: 'Ofen-Feta, Kirschtomaten, Pasta', price: '13' },
+      { name: 'Beetroot & Carrot Halwa', desc: 'Süßes Dessert mit Rote Bete und Karotte', price: '7' },
+      { name: 'Falafels (6 Stk.)', desc: 'Klassische Falafel mit Dip', price: '6' },
+    ],
+  },
+  {
+    id: 'drinks',
+    name: 'Getränke',
+    items: [
+      { name: 'Hausgemachte Limonade', desc: 'Zitrone oder Kräuter', price: '4' },
+      { name: 'Türkischer Kaffee', desc: 'Traditionell zubereitet', price: '3.50' },
+      { name: 'Tee (versch. Sorten)', desc: 'Heiß oder kalt', price: '3' },
+      { name: 'Smoothie', desc: 'Saisonal', price: '6' },
+    ],
+  },
+];
+---
+
+<Layout title="Menu – Linnavy Restaurant" description="Unser vollwertig-veganes Menü. Falafel, Bowls, Suppen und mehr.">
+  <section class="page-hero">
+    <h1 class="page-title">Menu</h1>
+    <p class="page-subtitle">Vollwertig, vegan, voller Geschmack.</p>
+  </section>
+
+  <div class="section">
+    {categories.map((cat) => (
+      <div class="menu-category" id={cat.id}>
+        <h2 class="category-title">{cat.name}</h2>
+        <ul class="menu-list">
+          {cat.items.map((item) => (
+            <li class="menu-item">
+              <div class="menu-item-head">
+                <span class="menu-item-name">{item.name}</span>
+                <span class="menu-item-price">{item.price} €</span>
+              </div>
+              {item.desc && <p class="menu-item-desc">{item.desc}</p>}
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+
+  <section class="section cta-section">
+    <a href="/contact/" class="btn">Reservierung & Bestellung</a>
+  </section>
+</Layout>
+
+<style>
+  .page-hero {
+    padding: 6rem 1.5rem 3rem;
+    text-align: center;
+    background: var(--color-surface);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .page-title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5vw, 3.5rem);
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+  }
+  .page-subtitle {
+    color: var(--color-text-muted);
+    margin: 0;
+  }
+
+  .menu-category {
+    margin-bottom: 3rem;
+  }
+  .category-title {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--color-accent);
+  }
+  .menu-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .menu-item {
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .menu-item-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+  }
+  .menu-item-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  .menu-item-price {
+    color: var(--color-accent);
+    white-space: nowrap;
+  }
+  .menu-item-desc {
+    margin: 0.25rem 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.95rem;
+  }
+  .cta-section {
+    text-align: center;
+    padding-bottom: 4rem;
+  }
+</style>
