@@ -1,0 +1,125 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  heading: string;
+}
+
+const { title, description, heading } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+  <slot name="head" slot="head" />
+  <Header />
+  <main id="main" class="legal-page">
+    <div class="container">
+      <article class="legal-page__article card" data-reveal>
+        <header class="legal-page__head">
+          <p class="eyebrow">Rechtliches</p>
+          <h1 class="legal-page__title display-lg">{heading}</h1>
+        </header>
+        <div class="legal-page__body">
+          <slot />
+        </div>
+        <p class="legal-page__back muted">
+          <a href="/">← Zur Startseite</a>
+        </p>
+      </article>
+    </div>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .legal-page {
+    padding-top: calc(var(--header-h) + var(--space-xl) + env(safe-area-inset-top, 0px));
+    padding-bottom: max(var(--space-2xl), env(safe-area-inset-bottom, 0px));
+    min-height: 50vh;
+  }
+
+  .legal-page__article {
+    width: 100%;
+    max-width: none;
+    margin-inline: 0;
+    padding: clamp(var(--space-md), 4vw, var(--space-xl));
+  }
+
+  .legal-page__head {
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-md);
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  .legal-page__title {
+    margin: var(--space-sm) 0 0;
+  }
+
+  .legal-page__body {
+    font-size: 0.98rem;
+    line-height: 1.72;
+    color: var(--color-ink-muted);
+  }
+
+  .legal-page__body :global(h2) {
+    margin: var(--space-xl) 0 var(--space-sm);
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
+  .legal-page__body :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .legal-page__body :global(p) {
+    margin: 0 0 var(--space-md);
+  }
+
+  .legal-page__body :global(ul) {
+    margin: 0 0 var(--space-md);
+    padding-left: 1.25rem;
+  }
+
+  .legal-page__body :global(li) {
+    margin-bottom: 0.35rem;
+  }
+
+  .legal-page__body :global(a) {
+    color: var(--color-accent);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .legal-page__body :global(a:hover) {
+    text-decoration: underline;
+  }
+
+  .legal-page__body :global(address) {
+    font-style: normal;
+    margin-bottom: var(--space-md);
+    color: var(--color-ink);
+  }
+
+  .legal-page__back {
+    margin: var(--space-xl) 0 0;
+    padding-top: var(--space-md);
+    border-top: 1px solid var(--color-line);
+    font-size: 0.9rem;
+  }
+
+  .legal-page__back a {
+    color: var(--color-accent);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .legal-page__back a:hover {
+    text-decoration: underline;
+  }
+</style>

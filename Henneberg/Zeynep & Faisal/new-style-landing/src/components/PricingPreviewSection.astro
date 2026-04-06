@@ -1,0 +1,326 @@
+---
+/**
+ * Startseite: Intro + CTA, Hauptgruppen-Kacheln mit Kurzpreisen (Anker /preise/)
+ */
+import SectionHeading from "./SectionHeading.astro";
+import BookingButton from "./BookingButton.astro";
+import { PRICE_MAIN_GROUP_TILES } from "../data/pricing";
+---
+
+<section class="section pricing-preview" id="preise" aria-labelledby="pricing-preview-heading">
+  <div class="container">
+    <div class="pricing-preview__intro-row">
+      <div class="pricing-preview__intro-copy">
+        <SectionHeading
+          eyebrow="Preise"
+          title="Häufig gebuchte Leistungen — mit Planity-Preisen"
+          subtitle="Je Bereich drei Beispiel-Leistungen mit Preis — vollständiges Angebot inkl. aller Zeiten und Varianten bei Planity und auf der Preisseite."
+          headingId="pricing-preview-heading"
+        />
+
+        <p class="pricing-preview__disclaimer muted">
+          — Bei Abweichungen gilt der Eintrag dort. „Ab“-Preise je nach Aufwand.
+        </p>
+      </div>
+
+      <aside class="pricing-preview__cta-aside" data-reveal aria-label="Termin und Preisliste">
+        <div class="pricing-preview__cta-card card">
+          <p class="pricing-preview__cta-label">Planity</p>
+          <h3 class="pricing-preview__cta-title">Termin oder komplette Liste</h3>
+          <p class="pricing-preview__cta-text muted">
+            Freie Slots und alle Services in Echtzeit — oder zuerst die Preisseite mit allen Kategorien.
+          </p>
+          <div class="pricing-preview__cta-row">
+            <BookingButton />
+            <a class="btn btn--ghost" href="/preise/">Komplette Preisliste</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <nav class="pricing-preview__tiles" aria-label="Hauptgruppen der Preisliste">
+      {
+        PRICE_MAIN_GROUP_TILES.map((tile) => (
+          <a
+            class="pricing-preview__tile card"
+            href={`/preise/${tile.preiseSearch ?? ""}#${tile.anchorId}`}
+            data-reveal
+          >
+            <span class="pricing-preview__tile-title">{tile.title}</span>
+            <span class="pricing-preview__tile-blurb">{tile.blurb}</span>
+            <ul class="pricing-preview__tile-rows" role="list">
+              {tile.previewRows.map((row) => (
+                <li class="pricing-preview__tile-row">
+                  <span class="pricing-preview__tile-row-text">
+                    <span class="pricing-preview__tile-row-name">{row.name}</span>
+                    {row.duration && (
+                      <span class="pricing-preview__tile-row-dur muted">{row.duration}</span>
+                    )}
+                  </span>
+                  <span class="pricing-preview__tile-row-price">{row.price}</span>
+                </li>
+              ))}
+            </ul>
+            <span class="pricing-preview__tile-cta">
+              Zur Sektion auf der Preisseite
+              <span class="pricing-preview__tile-arrow" aria-hidden="true">→</span>
+            </span>
+          </a>
+        ))
+      }
+    </nav>
+  </div>
+</section>
+
+<style>
+  .pricing-preview__intro-row {
+    display: grid;
+    gap: var(--space-lg);
+    align-items: start;
+    margin-bottom: var(--space-xl);
+  }
+
+  @media (min-width: 900px) {
+    .pricing-preview__intro-row {
+      grid-template-columns: minmax(0, 1fr) minmax(26rem, min(46rem, 48%));
+      column-gap: 5%;
+      row-gap: var(--space-lg);
+      align-items: center;
+    }
+  }
+
+  .pricing-preview__intro-copy {
+    min-width: 0;
+  }
+
+  .pricing-preview__intro-copy :global(.section-heading) {
+    margin-bottom: var(--space-md);
+  }
+
+  .pricing-preview__disclaimer {
+    margin: 0;
+    max-width: 44rem;
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+
+  .pricing-preview__cta-aside {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+  }
+
+  @media (min-width: 900px) {
+    .pricing-preview__cta-aside {
+      position: sticky;
+      top: calc(var(--header-h) + var(--space-md));
+    }
+  }
+
+  .pricing-preview__cta-card {
+    width: 100%;
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-sm);
+  }
+
+  .pricing-preview__cta-label {
+    margin: 0;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .pricing-preview__cta-title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.2rem, 2.2vw, 1.45rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  .pricing-preview__cta-text {
+    margin: 0 0 var(--space-xs);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .pricing-preview__cta-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: var(--space-sm);
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+  }
+
+  .pricing-preview__cta-row :global(.btn) {
+    flex: 1 1 12rem;
+    min-width: 0;
+    justify-content: center;
+    min-height: 3rem;
+  }
+
+  @media (max-width: 480px) {
+    .pricing-preview__cta-row {
+      flex-direction: column;
+    }
+
+    .pricing-preview__cta-row :global(.btn) {
+      flex: 1 1 auto;
+      width: 100%;
+    }
+  }
+
+  .pricing-preview__tiles {
+    display: grid;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+  }
+
+  @media (min-width: 520px) and (max-width: 699px) {
+    .pricing-preview__tiles {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 700px) {
+    .pricing-preview__tiles {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .pricing-preview__tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    margin: 0;
+    padding: var(--space-md) var(--space-lg);
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow-card);
+    border: 1px solid var(--color-line);
+    transition:
+      border-color 0.25s ease,
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  .pricing-preview__tile:hover {
+    border-color: rgba(20, 19, 18, 0.14);
+    box-shadow: 0 12px 36px -18px rgba(20, 19, 18, 0.18);
+    transform: translateY(-2px);
+  }
+
+  .pricing-preview__tile:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  .pricing-preview__tile-title {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    color: var(--color-ink);
+  }
+
+  .pricing-preview__tile-blurb {
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: var(--color-ink-muted);
+  }
+
+  .pricing-preview__tile-rows {
+    list-style: none;
+    margin: 0;
+    padding: var(--space-sm) 0 0;
+    border-top: 1px solid var(--color-line);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    flex: 1;
+  }
+
+  .pricing-preview__tile-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-sm);
+    padding: var(--space-sm) 0;
+    border-bottom: 1px solid rgba(20, 19, 18, 0.06);
+  }
+
+  .pricing-preview__tile-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .pricing-preview__tile-row-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+
+  .pricing-preview__tile-row-name {
+    font-weight: 600;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    color: var(--color-ink);
+  }
+
+  .pricing-preview__tile-row-dur {
+    font-size: 0.72rem;
+    line-height: 1.35;
+  }
+
+  .pricing-preview__tile-row-price {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.88rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+    color: var(--color-ink);
+  }
+
+  .pricing-preview__tile-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.15rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .pricing-preview__tile-arrow {
+    transition: transform 0.2s ease;
+  }
+
+  .pricing-preview__tile:hover .pricing-preview__tile-arrow {
+    transform: translateX(3px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pricing-preview__tile,
+    .pricing-preview__tile-arrow {
+      transition: none;
+    }
+
+    .pricing-preview__tile:hover {
+      transform: none;
+    }
+  }
+</style>

@@ -1,0 +1,773 @@
+---
+/**
+ * Stimmen: Watermark + Karussell (Tablet/Desktop) / gestapelte Karten (Mobil).
+ * Inhalte: Places API beim Build, sonst MANUAL_GOOGLE_REVIEWS, sonst Kurz-Fallback.
+ */
+import { GOOGLE, GOOGLE_REVIEWS_FALLBACK } from "../data/google";
+import { MANUAL_GOOGLE_REVIEWS } from "../data/manual-google-reviews";
+import { fetchPlaceReviewData } from "../lib/googlePlaces";
+import type { NormalizedReview } from "../lib/googlePlaces";
+
+const apiKey = import.meta.env.GOOGLE_PLACES_API_KEY as string | undefined;
+const placeIdFromEnv = import.meta.env.GOOGLE_PLACE_ID as string | undefined;
+const placeId = (placeIdFromEnv || GOOGLE.placeId || "").trim();
+
+const live = await fetchPlaceReviewData(apiKey, placeId);
+
+const mapsHref =
+  live?.googleMapsUri || `https://www.google.com/maps?cid=${GOOGLE.mapsCid}&hl=de`;
+
+const displayName = live?.displayName || "Google Bewertungen";
+const rating = live && live.rating > 0 ? live.rating : GOOGLE_REVIEWS_FALLBACK.rating;
+const userRatingCount =
+  live && live.userRatingCount > 0
+    ? live.userRatingCount
+    : GOOGLE_REVIEWS_FALLBACK.userRatingCount;
+
+const apiReviews =
+  live?.reviews?.length ? live.reviews.filter((r) => r.text.length > 0) : [];
+const manualReviews = MANUAL_GOOGLE_REVIEWS.filter((r) => r.text.trim().length > 0);
+
+const ratingLabel = rating.toFixed(1).replace(".", ",");
+
+type DisplayReview = {
+  author: string;
+  text: string;
+  rating: number;
+  relativeTime?: string;
+  authorPhoto?: string;
+  authorUri?: string;
+  source: "api" | "manual" | "fallback";
+};
+
+let displayReviews: DisplayReview[];
+
+if (apiReviews.length > 0) {
+  displayReviews = apiReviews.map((r: NormalizedReview) => ({
+    author: r.author,
+    text: r.text,
+    rating: r.rating,
+    relativeTime: r.relativeTime,
+    authorPhoto: r.authorPhoto,
+    authorUri: r.authorUri,
+    source: "api" as const,
+  }));
+} else if (manualReviews.length > 0) {
+  displayReviews = manualReviews.map((r) => ({
+    author: r.author,
+    text: r.text,
+    rating: r.rating,
+    relativeTime: r.relativeTime,
+    source: "manual" as const,
+  }));
+} else {
+  displayReviews = [
+    {
+      author: "Google-Profil",
+      rating: Math.round(rating),
+      text: `Aktuell ${userRatingCount.toLocaleString("de-DE")} öffentliche Bewertungen mit Ø ${ratingLabel} Sternen — alle authentischen Texte und Fotos lesen Sie direkt bei Google.`,
+      relativeTime: "Übersicht",
+      source: "fallback" as const,
+    },
+  ];
+}
+
+const carouselId = "stimmen-karussell";
+const carouselMulti = displayReviews.length > 1;
+---
+
+<section class="section testimonials testimonials--carousel" id="stimmen" aria-labelledby="testimonials-heading">
+  <div class="testimonials__watermark" aria-hidden="true">Stimmen</div>
+
+  <div class="container testimonials__intro">
+    <header class="testimonials__header">
+      <p class="eyebrow">Stimmen</p>
+      <h2 id="testimonials-heading" class="display-lg">Was Gäste über uns sagen</h2>
+    </header>
+  </div>
+
+  <div class="container testimonials__split">
+    <div class:list={["testimonials__desktop-grid", carouselMulti && "testimonials__desktop-grid--multi"]}>
+      <aside class="testimonials__widget card" aria-label="Google Bewertungen — Zusammenfassung">
+        <div class="testimonials__widget-inner">
+          <span class="testimonials__g" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 48 48">
+              <path
+                fill="#4285F4"
+                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+              ></path>
+              <path
+                fill="#34A853"
+                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6C44.43 39.29 48 34.22 48 24c0-1.64-.15-3.19-.43-4.65z"
+              ></path>
+              <path
+                fill="#FBBC05"
+                d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+              ></path>
+              <path
+                fill="#EA4335"
+                d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+              ></path>
+            </svg>
+          </span>
+          <div class="testimonials__widget-copy">
+            <p class="testimonials__summary-title">{displayName}</p>
+            <div class="testimonials__summary-row">
+              <div class="testimonials__stars" role="img" aria-label={`Durchschnitt ${ratingLabel} von 5 Sternen`}>
+                {[1, 2, 3, 4, 5].map((i) => <span class:list={["ts-star", i <= Math.round(rating) && "ts-star--on"]}>★</span>)}
+              </div>
+              <span class="testimonials__score">{ratingLabel}</span>
+              <span class="muted testimonials__count">{userRatingCount.toLocaleString("de-DE")} Bewertungen</span>
+            </div>
+            <a class="testimonials__widget-maps" href={mapsHref} target="_blank" rel="noopener noreferrer">
+              Profil bei Google <span aria-hidden="true">↗</span>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+      <div
+        class="testimonials__carousel-pane"
+        data-carousel
+        id={carouselId}
+        role="region"
+        aria-roledescription="Karussell"
+        aria-label="Ausgewählte Google-Bewertungen"
+      >
+        {
+          carouselMulti && (
+            <div class="testimonials__carousel-bar">
+              <button
+                type="button"
+                class="testimonials__nav-btn"
+                data-carousel-prev
+                aria-controls={`${carouselId}-track`}
+                aria-label="Vorherige Bewertung"
+              >
+                <span aria-hidden="true">‹</span>
+              </button>
+              <button
+                type="button"
+                class="testimonials__nav-btn"
+                data-carousel-next
+                aria-controls={`${carouselId}-track`}
+                aria-label="Nächste Bewertung"
+              >
+                <span aria-hidden="true">›</span>
+              </button>
+            </div>
+          )
+        }
+
+        <div
+          class="testimonials__track"
+          id={`${carouselId}-track`}
+          data-carousel-track
+          tabindex="0"
+          aria-live="polite"
+        >
+          {
+            displayReviews.map((r, i) => (
+              <article class="testimonials__slide card" data-carousel-slide data-index={i}>
+                <div class="testimonials__slide-top">
+                  {r.source === "api" && r.authorPhoto ? (
+                    <img
+                      class="testimonials__avatar"
+                      src={r.authorPhoto}
+                      alt=""
+                      width="44"
+                      height="44"
+                      loading={i < 2 ? "eager" : "lazy"}
+                      decoding="async"
+                      referrerpolicy="no-referrer"
+                    />
+                  ) : (
+                    <span class="testimonials__avatar testimonials__avatar--ph" aria-hidden="true" />
+                  )}
+                  <div class="testimonials__slide-meta">
+                    {r.source === "api" && r.authorUri ? (
+                      <a class="testimonials__author" href={r.authorUri} target="_blank" rel="noopener noreferrer">
+                        {r.author}
+                      </a>
+                    ) : (
+                      <span class="testimonials__author">{r.author}</span>
+                    )}
+                    {r.relativeTime && <p class="testimonials__time muted">{r.relativeTime}</p>}
+                  </div>
+                  <div class="testimonials__mini-stars" aria-label={`${r.rating} von 5 Sternen`}>
+                    {Array.from({ length: 5 }, (_, si) => (
+                      <span class:list={["ts-star ts-star--sm", si < r.rating && "ts-star--on"]} aria-hidden="true">
+                        ★
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <blockquote class="testimonials__quote">
+                  <p class="testimonials__text">{r.text}</p>
+                </blockquote>
+                {
+                  r.source === "api" && r.authorUri && (
+                    <p class="testimonials__slide-google muted">
+                      <a href={r.authorUri} target="_blank" rel="noopener noreferrer">
+                        Rezensent bei Google <span aria-hidden="true">↗</span>
+                      </a>
+                    </p>
+                  )
+                }
+              </article>
+            ))
+          }
+        </div>
+
+        {
+          carouselMulti && (
+            <>
+              <div class="testimonials__carousel-dots" data-carousel-dots role="group" aria-label="Position im Karussell">
+                {displayReviews.map((_, i) => (
+                  <button
+                    type="button"
+                    class="testimonials__dot"
+                    data-carousel-dot
+                    aria-label={`Bewertung ${i + 1} von ${displayReviews.length}`}
+                  />
+                ))}
+              </div>
+              <p class="testimonials__swipe-hint muted" aria-hidden="true">
+                Nach links wischen — weitere Bewertungen
+              </p>
+            </>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import "../scripts/reviews-carousel";
+</script>
+
+<style>
+  .testimonials--carousel {
+    position: relative;
+    overflow: hidden;
+    padding-top: var(--space-2xl);
+    /* Zusätzlich 3 % der Sektionsbreite (wie bei %-Padding üblich: relativ zur Breite) */
+    padding-bottom: calc(var(--space-2xl) + 3%);
+  }
+
+  .testimonials__watermark {
+    position: absolute;
+    left: 50%;
+    /* Oben verankern (nicht vertikal zentrieren), damit bei overflow:hidden nichts abgeschnitten wird */
+    top: calc(var(--space-2xl) + var(--space-xs));
+    transform: translateX(-50%);
+    font-family: var(--font-display);
+    font-size: clamp(4.5rem, 18vw, 14rem);
+    font-weight: 400;
+    letter-spacing: -0.04em;
+    line-height: 0.85;
+    color: rgba(20, 19, 18, 0.065);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+    z-index: 0;
+  }
+
+  @media (min-width: 768px) {
+    .testimonials__watermark {
+      top: calc(var(--space-2xl) + var(--space-sm));
+    }
+  }
+
+  .testimonials__intro {
+    position: relative;
+    z-index: 1;
+    text-align: left;
+    margin-bottom: var(--space-md);
+  }
+
+  .testimonials__header {
+    margin-bottom: 0;
+  }
+
+  .testimonials__header .display-lg {
+    margin: 0 0 var(--space-sm);
+  }
+
+  .testimonials__split {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-bottom: 0;
+  }
+
+  /**
+   * Desktop: Google-Kachel und Bewertungs-Track in derselben Grid-Zeile → gleiche Höhe wie die Karten.
+   * Navigation und Punkte liegen nur in Spalte 2 (nicht unter der Kachel).
+   */
+  .testimonials__desktop-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(14rem, 28%) minmax(0, 1fr);
+    grid-template-rows: 1fr;
+    grid-template-areas: "widget track";
+    column-gap: var(--space-lg);
+    row-gap: var(--space-sm);
+    align-items: stretch;
+    min-width: 0;
+  }
+
+  .testimonials__desktop-grid--multi {
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+      ". bar"
+      "widget track"
+      ". dots";
+  }
+
+  /* Tablet / kleines Laptop: eine Spalte — Widget oben, Karussell volle Breite */
+  @media (min-width: 768px) and (max-width: 1023px) {
+    .testimonials__desktop-grid {
+      grid-template-columns: 1fr;
+      column-gap: 0;
+      row-gap: var(--space-md);
+    }
+
+    .testimonials__desktop-grid:not(.testimonials__desktop-grid--multi) {
+      grid-template-rows: auto auto;
+      grid-template-areas:
+        "widget"
+        "track";
+    }
+
+    .testimonials__desktop-grid--multi {
+      grid-template-rows: auto auto 1fr auto;
+      grid-template-areas:
+        "widget"
+        "bar"
+        "track"
+        "dots";
+    }
+
+    .testimonials__slide {
+      flex: 0 0 min(calc(100% - 0.75rem), 28rem);
+    }
+  }
+
+  /* Kinder (Bar, Track, Dots) werden direkt im Desktop-Grid platziert */
+  .testimonials__carousel-pane {
+    display: contents;
+  }
+
+  .testimonials__widget {
+    grid-area: widget;
+    text-align: left;
+    margin: 0;
+    padding: var(--space-md) var(--space-lg);
+    height: auto;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    min-height: 0;
+  }
+
+  .testimonials__widget-inner {
+    flex: 1;
+    display: flex;
+    gap: var(--space-md);
+    align-items: center;
+    min-height: 0;
+  }
+
+  .testimonials__widget-copy {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .testimonials__widget-maps {
+    display: inline-block;
+    margin-top: var(--space-sm);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .testimonials__widget-maps:hover {
+    text-decoration: underline;
+  }
+
+  .testimonials__summary-title {
+    margin: 0 0 0.25rem;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .testimonials__summary-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 0.65rem;
+  }
+
+  .testimonials__stars {
+    display: inline-flex;
+    gap: 0.06rem;
+  }
+
+  .ts-star {
+    color: rgba(20, 19, 18, 0.18);
+    font-size: 1.1rem;
+    line-height: 1;
+  }
+
+  .ts-star--on {
+    color: var(--color-star);
+  }
+
+  .ts-star--sm {
+    font-size: 0.82rem;
+  }
+
+  .testimonials__score {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  .testimonials__count {
+    font-size: 0.88rem;
+  }
+
+  @media (max-width: 767px) {
+    /* Hintergrund „Stimmen“ etwas höher (ca. 50px), damit es auf dem Handy besser sitzt */
+    .testimonials__watermark {
+      top: calc(var(--space-2xl) + var(--space-xs) - 70px);
+    }
+
+    .testimonials__split {
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+
+    .testimonials__desktop-grid {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .testimonials__widget {
+      order: -1;
+    }
+
+    /* Pfeile verstecken (Wischen); Punkte unter dem Track für Orientierung */
+    .testimonials__carousel-bar {
+      display: none !important;
+    }
+
+    .testimonials__carousel-dots {
+      display: flex !important;
+      justify-content: center;
+      gap: 0.45rem;
+      padding-top: var(--space-sm);
+      padding-bottom: 0.15rem;
+      margin: 0;
+    }
+
+    .testimonials__dot {
+      width: 6px;
+      height: 6px;
+      min-width: 6px;
+      min-height: 6px;
+    }
+
+    .testimonials__dot.testimonials__dot--active {
+      transform: scale(1.35);
+    }
+
+    .testimonials__swipe-hint {
+      display: block;
+      text-align: center;
+      font-size: 0.78rem;
+      margin: 0.35rem 0 0;
+      line-height: 1.4;
+      letter-spacing: 0.02em;
+    }
+
+    /* Mobil: horizontales Scrollen mit 1–2 sichtbaren Karten */
+    .testimonials__carousel-pane {
+      display: block;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .testimonials__track {
+      display: flex !important;
+      flex-direction: row;
+      gap: var(--space-md);
+      align-items: stretch;
+      overflow-x: auto;
+      overflow-y: hidden;
+      scroll-snap-type: x mandatory;
+      scroll-padding-inline: 0.75rem;
+      padding-inline: 0.75rem;
+      padding-bottom: 0.25rem;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+
+    .testimonials__track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .testimonials__slide {
+      flex: 0 0 auto;
+      width: min(85vw, 26rem);
+      max-width: none;
+      min-height: 0;
+      scroll-snap-align: start;
+      padding: var(--space-md);
+    }
+  }
+
+  .testimonials__slide-google {
+    margin: var(--space-sm) 0 0;
+    font-size: 0.82rem;
+  }
+
+  .testimonials__slide-google a {
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .testimonials__slide-google a:hover {
+    text-decoration: underline;
+  }
+
+  @media (min-width: 768px) {
+    .testimonials__swipe-hint {
+      display: none;
+    }
+
+    .testimonials__slide-google {
+      display: none;
+    }
+  }
+
+  .testimonials__carousel-bar {
+    grid-area: bar;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.45rem;
+    margin: 0;
+    max-width: 100%;
+    align-self: end;
+  }
+
+  .testimonials__nav-btn {
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: var(--radius-pill);
+    border: 1px solid var(--color-line);
+    background: var(--color-bg-elevated);
+    color: var(--color-ink);
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-card);
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  .testimonials__nav-btn:hover {
+    border-color: rgba(20, 19, 18, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .testimonials__nav-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .testimonials__track {
+    grid-area: track;
+    min-height: 0;
+    height: 100%;
+    align-self: stretch;
+    display: flex;
+    gap: var(--space-md);
+    align-items: stretch;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 0 0.5rem;
+    padding-inline: 0 0.25rem;
+    padding-bottom: 0;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .testimonials__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .testimonials__carousel-dots {
+    grid-area: dots;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.4rem;
+    padding-top: var(--space-sm);
+    margin: 0;
+  }
+
+  .testimonials__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: var(--radius-pill);
+    border: none;
+    margin: 0;
+    padding: 0;
+    background: rgba(20, 19, 18, 0.12);
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      transform 0.2s ease,
+      opacity 0.2s ease;
+  }
+
+  .testimonials__dot:hover {
+    background: rgba(20, 19, 18, 0.22);
+  }
+
+  .testimonials__dot:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .testimonials__dot.testimonials__dot--active {
+    background: rgba(20, 19, 18, 0.38);
+    transform: scale(1.25);
+  }
+
+  .testimonials__track:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .testimonials__slide {
+    flex: 0 0 min(calc(100% - 1rem), 360px);
+    align-self: stretch;
+    scroll-snap-align: start;
+    margin: 0;
+    padding: var(--space-lg);
+    text-align: left;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    box-sizing: border-box;
+  }
+
+  @media (min-width: 720px) {
+    .testimonials__slide {
+      flex-basis: min(calc(100% - 2rem), 420px);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .testimonials__slide {
+      flex-basis: min(calc(100% - 3rem), 480px);
+    }
+  }
+
+  .testimonials__slide-top {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-sm);
+    align-items: start;
+    margin-bottom: var(--space-md);
+  }
+
+  .testimonials__avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .testimonials__avatar--ph {
+    display: block;
+    background: var(--color-line);
+  }
+
+  .testimonials__author {
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+
+  .testimonials__author:hover {
+    text-decoration: underline;
+  }
+
+  .testimonials__time {
+    margin: 0.15rem 0 0;
+    font-size: 0.78rem;
+  }
+
+  .testimonials__mini-stars {
+    display: flex;
+    gap: 0;
+    flex-shrink: 0;
+  }
+
+  .testimonials__quote {
+    margin: 0;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .testimonials__quote .testimonials__text {
+    flex: 1;
+  }
+
+  .testimonials__text {
+    margin: 0;
+    font-size: 1.02rem;
+    line-height: 1.65;
+    color: var(--color-ink-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .testimonials__track {
+      scroll-behavior: auto;
+    }
+
+    .testimonials__nav-btn:hover {
+      transform: none;
+    }
+
+    .testimonials__dot,
+    .testimonials__dot.testimonials__dot--active {
+      transition: none;
+      transform: none;
+    }
+  }
+</style>

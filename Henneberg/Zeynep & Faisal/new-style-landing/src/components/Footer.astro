@@ -1,0 +1,251 @@
+---
+import { SITE } from "../data/site";
+import { getMainNavItems } from "../data/nav";
+import BookingButton from "./BookingButton.astro";
+
+const navItems = getMainNavItems(Astro.url.pathname);
+---
+
+<footer class="site-footer section section--dark" id="kontakt">
+  <div class="container">
+    <div class="site-footer__grid" data-reveal>
+      <div class="site-footer__col site-footer__col--contact">
+        <p class="eyebrow">Kontakt</p>
+        <a
+          class="site-footer__logo"
+          href="/"
+          aria-label={`${SITE.name} — ${SITE.tagline}, Startseite`}
+        >
+          <img
+            src="/logo-zeynep-faisal.png"
+            alt=""
+            width="440"
+            height="155"
+            class="site-footer__logo-img"
+            decoding="async"
+          />
+        </a>
+        <p class="display-md site-footer__title">{SITE.name}</p>
+        <p class="muted site-footer__tag">{SITE.tagline} · {SITE.city}</p>
+        <p class="site-footer__address">{SITE.addressLine}</p>
+        <p class="site-footer__hours">{SITE.openingHours}</p>
+        <p>
+          <a href={`mailto:${SITE.email}`}>{SITE.email}</a>
+        </p>
+      </div>
+
+      <nav class="site-footer__col site-footer__col--nav" aria-label="Seitenmenü">
+        <p class="eyebrow">Menü</p>
+        <ul class="site-footer__nav-list">
+          {
+            navItems.map((item) => (
+              <li>
+                <a href={item.href}>{item.label}</a>
+              </li>
+            ))
+          }
+          <li>
+            <a href={SITE.bookingUrl} target="_blank" rel="noopener noreferrer">
+              Termin buchen ↗
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="site-footer__col site-footer__col--cta">
+        <p class="eyebrow">Buchung</p>
+        <p class="lead site-footer__cta-lead">
+          Ihr nächster Termin ist nur wenige Klicks entfernt — wählen Sie Zeit, Leistung und Lieblingsstylist:in direkt in Planity.
+        </p>
+        <BookingButton variant="on-dark" />
+      </div>
+    </div>
+
+    <div class="site-footer__legal-bar">
+      <div class="site-footer__legal">
+        <p class="site-footer__legal-copy">
+          © {new Date().getFullYear()} {SITE.name}. Alle Rechte vorbehalten.
+        </p>
+        <p class="site-footer__legal-links">
+          <a href="/preise/">Preise &amp; Leistungen</a>
+          <span class="site-footer__legal-sep" aria-hidden="true">·</span>
+          <a href={SITE.bookingUrl} target="_blank" rel="noopener noreferrer">Planity</a>
+          <span class="site-footer__legal-sep" aria-hidden="true">·</span>
+          <a href="/impressum/">Impressum</a>
+          <span class="site-footer__legal-sep" aria-hidden="true">·</span>
+          <a href="/datenschutz/">Datenschutz</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer__grid {
+    display: grid;
+    gap: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid rgba(247, 245, 242, 0.12);
+  }
+
+  @media (min-width: 900px) {
+    .site-footer__grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr) minmax(0, 1fr);
+      align-items: start;
+      gap: var(--space-lg) var(--space-xl);
+    }
+  }
+
+  @media (min-width: 640px) and (max-width: 899px) {
+    .site-footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .site-footer__col--cta {
+      grid-column: 1 / -1;
+    }
+  }
+
+  .site-footer__logo {
+    display: inline-block;
+    line-height: 0;
+    margin: 0 0 var(--space-sm);
+    text-decoration: none;
+  }
+
+  .site-footer__logo:hover .site-footer__logo-img {
+    opacity: 1;
+  }
+
+  .site-footer__logo-img {
+    height: clamp(2.1rem, 5vw, 2.85rem);
+    width: auto;
+    max-width: min(240px, 72vw);
+    object-fit: contain;
+    display: block;
+    filter: brightness(0) invert(1);
+    opacity: 0.9;
+    transition: opacity 0.25s ease;
+  }
+
+  .site-footer__title {
+    margin-bottom: var(--space-xs);
+  }
+
+  .site-footer__tag {
+    margin-top: 0;
+    margin-bottom: var(--space-md);
+  }
+
+  .site-footer__address,
+  .site-footer__hours {
+    margin: 0 0 var(--space-sm);
+    color: rgba(247, 245, 242, 0.78);
+  }
+
+  .site-footer__nav-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .site-footer__nav-list a {
+    font-family: var(--font-body);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: rgba(247, 245, 242, 0.88);
+    transition: color 0.2s ease;
+  }
+
+  .site-footer__nav-list a:hover {
+    color: #fff;
+    text-decoration: none;
+  }
+
+  .site-footer__col--cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-md);
+  }
+
+  .site-footer__cta-lead {
+    color: rgba(247, 245, 242, 0.85);
+    margin: 0;
+    max-width: 28rem;
+  }
+
+  /**
+   * Kompakte Copyright-Zeile: eine Zeile, geringe Höhe (~1–2 % der Footer-Höhe visuell).
+   * Auf sehr schmalen Viewports horizontal scrollen statt umbrechen.
+   */
+  .site-footer__legal-bar {
+    --footer-legal-pad: clamp(0.35rem, 2vmin, 0.55rem);
+    margin-top: 0;
+    padding-top: var(--footer-legal-pad);
+    padding-bottom: calc(var(--footer-legal-pad) + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .site-footer__legal {
+    margin: 0;
+    width: 100%;
+    max-width: 36rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.45rem;
+    font-size: max(0.68rem, 11px);
+    line-height: 1.35;
+    letter-spacing: 0.01em;
+    color: rgba(247, 245, 242, 0.55);
+  }
+
+  .site-footer__legal-copy {
+    margin: 0;
+    max-width: 100%;
+    color: rgba(247, 245, 242, 0.58);
+  }
+
+  .site-footer__legal-links {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    column-gap: 0.35rem;
+    row-gap: 0.2rem;
+    max-width: 100%;
+  }
+
+  .site-footer__legal-sep {
+    color: rgba(247, 245, 242, 0.35);
+    user-select: none;
+  }
+
+  .site-footer__legal a {
+    color: rgba(247, 245, 242, 0.85);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .site-footer__legal a:hover {
+    text-decoration: underline;
+  }
+
+  @media (min-width: 640px) {
+    .site-footer__legal {
+      max-width: none;
+    }
+  }
+</style>

@@ -1,0 +1,42 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Hero from "../components/Hero.astro";
+import TrustSection from "../components/TrustSection.astro";
+import PricingPreviewSection from "../components/PricingPreviewSection.astro";
+import ProductsSection from "../components/ProductsSection.astro";
+import FeatureGlass from "../components/FeatureGlass.astro";
+import MoodGallery from "../components/MoodGallery.astro";
+import TestimonialsSection from "../components/TestimonialsSection.astro";
+import FinalCTA from "../components/FinalCTA.astro";
+import Footer from "../components/Footer.astro";
+import { SITE } from "../data/site";
+import { buildHomeJsonLd, getSiteOrigin } from "../data/schema-jsonld";
+
+/**
+ * SEO: Titel & Description — bei Go-Live an echte Keywords / USPs anpassen.
+ */
+const pageTitle =
+  "New Style by Zeynep & Faisal | Meisterbetrieb Friseur Gelsenkirchen — Termin online buchen";
+const pageDescription =
+  "Premium-Friseur in Gelsenkirchen: Schnitt, Farbe & Pflege auf Meisterniveau. Ruhige Beratung, transparente Preise — Termin sicher über Planity buchen.";
+
+const siteOrigin = getSiteOrigin(Astro.site);
+const jsonLd = buildHomeJsonLd(pageDescription, siteOrigin);
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(jsonLd)} />
+  <Header />
+  <main id="main">
+    <Hero />
+    <TrustSection />
+    <FeatureGlass />
+    <PricingPreviewSection />
+    <TestimonialsSection />
+    <MoodGallery />
+    <ProductsSection />
+    <FinalCTA />
+  </main>
+  <Footer />
+</BaseLayout>

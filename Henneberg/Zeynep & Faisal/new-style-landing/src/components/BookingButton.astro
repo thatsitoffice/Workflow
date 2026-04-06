@@ -1,0 +1,41 @@
+---
+import { SITE } from "../data/site";
+
+interface Props {
+  variant?: "primary" | "ghost" | "on-dark" | "heroSolid" | "heroOutline";
+  class?: string;
+  /** Kurzer Screenreader-Hinweis optional */
+  labelSuffix?: string;
+}
+
+const {
+  variant = "primary",
+  class: className = "",
+  labelSuffix = "",
+} = Astro.props;
+
+const cls = [
+  "btn",
+  variant === "primary" && "btn--primary",
+  variant === "ghost" && "btn--ghost",
+  variant === "on-dark" && "btn--on-dark",
+  variant === "heroSolid" && "btn--hero-solid",
+  variant === "heroOutline" && "btn--hero-outline",
+  className,
+]
+  .filter(Boolean)
+  .join(" ");
+
+const label = "Termin buchen" + (labelSuffix ? " — " + labelSuffix : "");
+---
+
+<a
+  class={cls}
+  href={SITE.bookingUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={`${label} (öffnet Planity in neuem Tab)`}
+>
+  Termin buchen
+  <span aria-hidden="true">↗</span>
+</a>

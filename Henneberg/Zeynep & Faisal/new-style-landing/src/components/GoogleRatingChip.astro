@@ -1,0 +1,252 @@
+---
+/**
+ * Kompakte Google-Bewertung (Fallback-Zahlen aus google.ts) — für Header & Hero.
+ */
+import { GOOGLE, GOOGLE_REVIEWS_FALLBACK } from "../data/google";
+
+interface Props {
+  /** Header: einzeilig kompakt · Hero: etwas größer mit Frosted Panel */
+  variant?: "header" | "hero";
+  /** Helle Header-Leiste (z. B. Preisseite) — dunkle Typo. Über Hero: false, bis Scroll wechselt CSS. */
+  lightBar?: boolean;
+}
+
+const { variant = "header", lightBar = false } = Astro.props;
+
+const mapsHref = `https://www.google.com/maps?cid=${GOOGLE.mapsCid}&hl=de`;
+const { rating, userRatingCount } = GOOGLE_REVIEWS_FALLBACK;
+const ratingDisplay = rating.toFixed(1).replace(".", ",");
+const frac = rating - Math.floor(rating);
+const hasHalf = frac >= 0.25 && frac < 0.75;
+const extraFull = frac >= 0.75 ? 1 : 0;
+const nFull = Math.min(5, Math.floor(rating) + extraFull);
+const nEmpty = Math.max(0, 5 - nFull - (hasHalf ? 1 : 0));
+
+const label = `Google: ${ratingDisplay} von 5 Sternen, ${userRatingCount.toLocaleString("de-DE")} Bewertungen — Profil öffnen`;
+---
+
+<a
+  class:list={[
+    "google-chip",
+    variant === "hero" && "google-chip--hero",
+    lightBar && "google-chip--lightbar",
+  ]}
+  href={mapsHref}
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={label}
+>
+  <span class="google-chip__g" aria-hidden="true">
+    <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+      <path
+        fill="#4285F4"
+        d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+      ></path>
+      <path
+        fill="#34A853"
+        d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6C44.43 39.29 48 34.22 48 24c0-1.64-.15-3.19-.43-4.65z"
+      ></path>
+      <path
+        fill="#FBBC05"
+        d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+      ></path>
+      <path
+        fill="#EA4335"
+        d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+      ></path>
+    </svg>
+  </span>
+  <span class="google-chip__body">
+    <span class="google-chip__stars" aria-hidden="true">
+      {
+        Array.from({ length: nFull }, () => (
+          <span class="google-chip__star google-chip__star--on">★</span>
+        ))
+      }
+      {hasHalf && <span class="google-chip__star google-chip__star--half">★</span>}
+      {
+        Array.from({ length: nEmpty }, () => (
+          <span class="google-chip__star">★</span>
+        ))
+      }
+    </span>
+    <span class="google-chip__meta">
+      <strong class="google-chip__score">{ratingDisplay}</strong>
+      <span class="google-chip__sep">·</span>
+      <span class="google-chip__count">{userRatingCount.toLocaleString("de-DE")}</span>
+      <span class="google-chip__suffix"> Google</span>
+    </span>
+  </span>
+</a>
+
+<style>
+  .google-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    max-width: 100%;
+    text-decoration: none;
+    color: inherit;
+    border-radius: var(--radius-pill);
+    padding: 0.28rem 0.65rem 0.28rem 0.5rem;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition:
+      background 0.25s ease,
+      border-color 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  .google-chip:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.35);
+    text-decoration: none;
+  }
+
+  .google-chip--hero {
+    padding: 0.55rem 0.85rem 0.55rem 0.7rem;
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.28);
+    box-shadow: 0 12px 32px -16px rgba(0, 0, 0, 0.35);
+  }
+
+  .google-chip--hero:hover {
+    background: rgba(255, 255, 255, 0.22);
+  }
+
+  .google-chip__g {
+    flex-shrink: 0;
+    display: flex;
+    line-height: 0;
+  }
+
+  .google-chip__g svg {
+    display: block;
+  }
+
+  .google-chip__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.06rem;
+    min-width: 0;
+    line-height: 1.15;
+  }
+
+  .google-chip--hero .google-chip__body {
+    gap: 0.12rem;
+  }
+
+  .google-chip__stars {
+    display: flex;
+    gap: 0.02rem;
+    font-size: 0.65rem;
+    line-height: 1;
+  }
+
+  .google-chip--hero .google-chip__stars {
+    font-size: 0.78rem;
+  }
+
+  .google-chip__star {
+    color: rgba(255, 255, 255, 0.28);
+  }
+
+  .google-chip__star--on {
+    color: #e8c87a;
+  }
+
+  .google-chip__star--half {
+    color: #e8c87a;
+    opacity: 0.55;
+  }
+
+  .google-chip__meta {
+    font-family: var(--font-body);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.88);
+    white-space: nowrap;
+  }
+
+  @media (max-width: 380px) {
+    .google-chip__meta {
+      white-space: normal;
+      letter-spacing: 0.05em;
+    }
+  }
+
+  .google-chip--hero .google-chip__meta {
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+  }
+
+  .google-chip__score {
+    font-weight: 700;
+    font-size: 1em;
+  }
+
+  .google-chip__sep {
+    opacity: 0.55;
+    margin: 0 0.12em;
+  }
+
+  .google-chip__count {
+    font-weight: 600;
+  }
+
+  .google-chip__suffix {
+    font-weight: 600;
+    opacity: 0.75;
+  }
+
+  .google-chip--lightbar {
+    background: rgba(20, 19, 18, 0.05);
+    border-color: rgba(20, 19, 18, 0.1);
+  }
+
+  .google-chip--lightbar:hover {
+    background: rgba(20, 19, 18, 0.08);
+    border-color: rgba(20, 19, 18, 0.14);
+  }
+
+  .google-chip--lightbar .google-chip__star {
+    color: rgba(20, 19, 18, 0.12);
+  }
+
+  .google-chip--lightbar .google-chip__star--on,
+  .google-chip--lightbar .google-chip__star--half {
+    color: var(--color-star);
+  }
+
+  .google-chip--lightbar .google-chip__meta {
+    color: var(--color-ink);
+  }
+
+  /* Overlay-Header nach Scroll: wie helle Leiste */
+  :global(.site-header--scrolled) .google-chip:not(.google-chip--hero) {
+    background: rgba(20, 19, 18, 0.06);
+    border-color: rgba(20, 19, 18, 0.1);
+  }
+
+  :global(.site-header--scrolled) .google-chip:not(.google-chip--hero):hover {
+    background: rgba(20, 19, 18, 0.09);
+    border-color: rgba(20, 19, 18, 0.14);
+  }
+
+  :global(.site-header--scrolled) .google-chip:not(.google-chip--hero) .google-chip__star {
+    color: rgba(20, 19, 18, 0.12);
+  }
+
+  :global(.site-header--scrolled) .google-chip:not(.google-chip--hero) .google-chip__star--on,
+  :global(.site-header--scrolled) .google-chip:not(.google-chip--hero) .google-chip__star--half {
+    color: var(--color-star);
+  }
+
+  :global(.site-header--scrolled) .google-chip:not(.google-chip--hero) .google-chip__meta {
+    color: var(--color-ink);
+  }
+</style>

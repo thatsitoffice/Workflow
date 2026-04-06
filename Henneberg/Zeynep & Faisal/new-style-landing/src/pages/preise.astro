@@ -1,0 +1,477 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import BookingButton from "../components/BookingButton.astro";
+import PriceCategoryCard from "../components/PriceCategoryCard.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import { SITE } from "../data/site";
+import { PRICE_CATEGORIES, PLANITY_PRICING_URL } from "../data/pricing";
+import { SALON_IMAGES } from "../data/salon-images";
+import { buildWebPageBreadcrumbJsonLd, getSiteOrigin } from "../data/schema-jsonld";
+
+const pageTitle = `Preise & Leistungen | ${SITE.name} — ${SITE.tagline} ${SITE.city}`;
+const pageDescription = `Aktuelle Leistungen und Preise: Schnitt, Color, Blond Signature, Pflege, Herren, Bart & Beauty — gebucht bei Planity. ${SITE.addressLine}.`;
+
+const hoursRows = SITE.openingHoursLines;
+
+const heroBg = SALON_IMAGES.preiseHero;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? SITE.canonicalBase).toString();
+const subJsonLd = buildWebPageBreadcrumbJsonLd(getSiteOrigin(Astro.site), canonicalUrl, pageTitle, pageDescription, [
+  { name: "Start", path: "/" },
+  { name: "Preise & Leistungen", path: "/preise/" },
+]);
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <script type="application/ld+json" is:inline slot="head" set:html={JSON.stringify(subJsonLd)} />
+  <Header />
+  <main id="main" class="preise-page">
+    <section class="preise-page__hero-wrap" aria-labelledby="preise-hero-heading">
+      <div class="preise-page__hero-media" aria-hidden="true">
+        <img
+          src={heroBg.src}
+          alt=""
+          width={heroBg.w}
+          height={heroBg.h}
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+          class="preise-page__hero-img"
+        />
+      </div>
+      <div class="preise-page__hero-scrim" aria-hidden="true"></div>
+
+      <div class="preise-page__hero-inner container">
+        <div class="preise-page__hero-grid">
+          <div class="preise-page__hero-copy" data-reveal>
+            <p class="eyebrow preise-page__hero-eyebrow">Planity</p>
+            <h1 id="preise-hero-heading" class="display-xl preise-page__hero-title">Preise & Leistungen</h1>
+            <p class="lead preise-page__lead">
+              Alle Angaben entsprechen der öffentlichen Karte bei{" "}
+              <a class="preise-page__hero-link" href={PLANITY_PRICING_URL} target="_blank" rel="noopener noreferrer">
+                Planity
+              </a>
+              — verbindlich für Buchung und Finale sind die dortigen Beschreibungen, Zeiten und Preise zum Zeitpunkt Ihrer Reservierung.
+            </p>
+            <div class="preise-page__hero-actions">
+              <BookingButton variant="on-dark" />
+              <a class="btn btn--hero-outline" href="/">Zur Startseite</a>
+            </div>
+          </div>
+
+          <aside class="preise-page__hero-glass card" data-reveal aria-label="Salon-Infos">
+            <div class="preise-page__glass-hours">
+              <h2 id="preise-meta-heading" class="preise-page__glass-h2">Öffnungszeiten</h2>
+              <table class="preise-page__hours-table" aria-label="Öffnungszeiten">
+                <tbody>
+                  {
+                    hoursRows.map((row) => (
+                      <tr>
+                        <th scope="row">{row.day}</th>
+                        <td>{row.hours}</td>
+                      </tr>
+                    ))
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <div class="preise-page__glass-lower">
+              <div class="preise-page__glass-col">
+                <h3 class="preise-page__glass-h3">Zahlung vor Ort</h3>
+                <p class="preise-page__glass-text">{SITE.paymentMethods}</p>
+              </div>
+              <div class="preise-page__glass-col">
+                <h3 class="preise-page__glass-h3">Adresse & Erreichbarkeit</h3>
+                <p class="preise-page__glass-text">{SITE.addressLine}</p>
+                <p class="preise-page__glass-text">
+                  <a class="preise-page__glass-a" href={`tel:${SITE.phoneTel}`}>{SITE.phoneDisplay}</a>
+                </p>
+                <p class="preise-page__glass-text preise-page__glass-text--tight">
+                  <a class="preise-page__glass-a" href={SITE.bookingUrl} target="_blank" rel="noopener noreferrer">
+                    Termin online bei Planity <span aria-hidden="true">↗</span>
+                  </a>
+                </p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section preise-page__list" aria-label="Preisliste nach Kategorien">
+      <div class="container" id="preise-katalog">
+        <SectionHeading
+          eyebrow="Leistungskatalog"
+          title="Alles im Überblick"
+          subtitle="Filtern Sie nach Damen, Männern oder Extensions — vollständige Angaben wie in Planity; buchen und Verfügbarkeiten dort prüfen."
+          headingId="preise-katalog-heading"
+        />
+
+        <div class="preise-page__filter-block" data-reveal>
+          <p class="preise-page__filter-hint muted">
+            Bereich wählen — inkl. Leistungen für <strong>Männer</strong> (Haar, Color, Bart &amp; Beauty).
+          </p>
+          <div class="preise-page__filter" role="group" aria-label="Leistungskatalog nach Bereich filtern">
+            <button
+              type="button"
+              class="preise-page__filter-btn preise-page__filter-btn--active"
+              data-preise-filter="alle"
+              aria-pressed="true"
+            >
+              Alle
+            </button>
+            <button type="button" class="preise-page__filter-btn" data-preise-filter="damen" aria-pressed="false">
+              Damen
+            </button>
+            <button type="button" class="preise-page__filter-btn" data-preise-filter="herren" aria-pressed="false">
+              Männer
+            </button>
+            <button type="button" class="preise-page__filter-btn" data-preise-filter="extensions" aria-pressed="false">
+              Extensions
+            </button>
+          </div>
+          <p class="preise-page__filter-empty" data-preise-filter-empty hidden>
+            In dieser Auswahl sind aktuell keine Kategorien hinterlegt.
+          </p>
+        </div>
+
+        <div class="preise-page__categories">
+          {PRICE_CATEGORIES.map((cat, i) => <PriceCategoryCard category={cat} revealDelayMs={i * 50} />)}
+        </div>
+        <footer class="preise-page__footer-cta card" data-reveal>
+          <p class="lead" style="margin: 0;">
+            Fertig ausgewählt? Im nächsten Schritt wählen Sie Mitarbeitende:in, Datum und Uhrzeit — direkt in Planity.
+          </p>
+          <BookingButton />
+        </footer>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<script>
+  import "../scripts/preise-filter";
+</script>
+
+<style>
+  .preise-page__hero-wrap {
+    position: relative;
+    overflow: hidden;
+    margin-top: calc(-1 * var(--header-h));
+    padding-top: calc(var(--space-2xl) + var(--header-h) + env(safe-area-inset-top, 0px));
+    padding-bottom: max(var(--space-2xl), env(safe-area-inset-bottom, 0px));
+    min-height: min(72svh, 52rem);
+    display: flex;
+    align-items: center;
+  }
+
+  @supports not (min-height: 72svh) {
+    .preise-page__hero-wrap {
+      min-height: min(72vh, 52rem);
+    }
+  }
+
+  .preise-page__hero-media {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    /* Keine Klicks abfangen — Bereich unter Sticky-Header bleibt für Menü/Hamburger nutzbar */
+    pointer-events: none;
+  }
+
+  .preise-page__hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Motiv: Styling-Stationen / Spiegel eher rechts im Bild */
+    object-position: 62% 48%;
+    filter: saturate(1.05) brightness(0.88);
+  }
+
+  @media (max-width: 640px) {
+    .preise-page__hero-img {
+      object-position: 58% 42%;
+    }
+  }
+
+  .preise-page__hero-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: linear-gradient(
+      105deg,
+      rgba(8, 7, 6, 0.92) 0%,
+      rgba(8, 7, 6, 0.82) 38%,
+      rgba(8, 7, 6, 0.62) 58%,
+      rgba(8, 7, 6, 0.45) 100%
+    );
+  }
+
+  .preise-page__hero-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    pointer-events: auto;
+  }
+
+  .preise-page__hero-grid {
+    display: grid;
+    gap: var(--space-xl);
+    align-items: stretch;
+  }
+
+  @media (min-width: 960px) {
+    .preise-page__hero-grid {
+      grid-template-columns: minmax(0, 1fr) minmax(17.5rem, 22rem);
+      gap: clamp(var(--space-xl), 4vw, var(--space-2xl));
+      align-items: center;
+    }
+  }
+
+  .preise-page__hero-copy {
+    text-align: left;
+    max-width: 38rem;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  .preise-page__hero-eyebrow {
+    color: rgba(250, 248, 245, 0.75);
+    margin-bottom: var(--space-sm);
+  }
+
+  .preise-page__hero-title {
+    margin: 0;
+    color: #faf8f5;
+  }
+
+  .preise-page__lead {
+    margin-top: var(--space-md);
+    margin-bottom: var(--space-lg);
+    color: rgba(247, 245, 242, 0.94);
+    text-shadow: 0 1px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  .preise-page__hero-link {
+    color: #fff;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  .preise-page__hero-link:hover {
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  .preise-page__hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    align-items: center;
+  }
+
+  /* Glaskachel: hell, lesbar auf dunklem Hero */
+  .preise-page__hero-glass {
+    margin: 0;
+    padding: var(--space-lg);
+    background: rgba(255, 252, 250, 0.55);
+    backdrop-filter: blur(20px) saturate(1.2);
+    -webkit-backdrop-filter: blur(20px) saturate(1.2);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    box-shadow:
+      0 4px 24px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    color: var(--color-ink);
+  }
+
+  @supports not (backdrop-filter: blur(1px)) {
+    .preise-page__hero-glass {
+      background: rgba(252, 250, 247, 0.94);
+    }
+  }
+
+  .preise-page__glass-h2 {
+    margin: 0 0 var(--space-sm);
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.25;
+    color: var(--color-ink);
+  }
+
+  .preise-page__glass-h3 {
+    margin: 0 0 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+  }
+
+  .preise-page__glass-text {
+    margin: 0 0 0.5rem;
+    font-size: 0.88rem;
+    line-height: 1.55;
+    color: var(--color-ink-muted);
+  }
+
+  .preise-page__glass-text:last-child {
+    margin-bottom: 0;
+  }
+
+  .preise-page__glass-text--tight {
+    margin-top: 0.35rem;
+    margin-bottom: 0;
+  }
+
+  .preise-page__glass-a {
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+  }
+
+  .preise-page__glass-a:hover {
+    text-decoration: underline;
+  }
+
+  .preise-page__glass-lower {
+    display: grid;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 1px solid rgba(20, 19, 18, 0.1);
+  }
+
+  @media (min-width: 520px) {
+    .preise-page__glass-lower {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+    }
+  }
+
+  .preise-page__hours-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.86rem;
+  }
+
+  .preise-page__hours-table th,
+  .preise-page__hours-table td {
+    padding: 0.32rem 0;
+    border-bottom: 1px solid rgba(20, 19, 18, 0.08);
+    text-align: left;
+    font-weight: 400;
+    color: var(--color-ink-muted);
+  }
+
+  .preise-page__hours-table th {
+    font-weight: 600;
+    color: var(--color-ink);
+    padding-right: var(--space-md);
+    white-space: nowrap;
+  }
+
+  .preise-page__hours-table tr:last-child th,
+  .preise-page__hours-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .preise-page__filter-block {
+    margin-bottom: var(--space-xl);
+    max-width: 48rem;
+  }
+
+  .preise-page__filter-hint {
+    margin: 0 0 var(--space-md);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .preise-page__filter-hint strong {
+    font-weight: 600;
+    color: var(--color-ink-muted);
+  }
+
+  .preise-page__filter {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .preise-page__filter-btn {
+    appearance: none;
+    margin: 0;
+    padding: 0.55rem 1.1rem;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-muted);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .preise-page__filter-btn:hover {
+    border-color: rgba(20, 19, 18, 0.14);
+    color: var(--color-ink);
+  }
+
+  .preise-page__filter-btn:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .preise-page__filter-btn--active {
+    background: var(--color-ink);
+    color: #faf8f5;
+    border-color: var(--color-ink);
+    box-shadow: 0 8px 22px -12px rgba(20, 19, 18, 0.35);
+  }
+
+  .preise-page__filter-btn--active:hover {
+    background: var(--color-deep);
+    border-color: var(--color-deep);
+    color: #fff;
+  }
+
+  .preise-page__filter-empty {
+    margin: var(--space-sm) 0 0;
+    font-size: 0.9rem;
+    color: var(--color-ink-muted);
+  }
+
+  .preise-page__categories {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .preise-page__footer-cta {
+    margin-top: var(--space-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    align-items: flex-start;
+  }
+
+  @media (min-width: 640px) {
+    .preise-page__footer-cta {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+</style>

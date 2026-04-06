@@ -1,0 +1,193 @@
+---
+import SectionHeading from "./SectionHeading.astro";
+
+const pillars = [
+  {
+    title: "Meisterbetrieb",
+    text: "Zwei Meister:innen, ein Anspruch: Technik, die hält — und ein Look, der zu Ihrem Leben passt.",
+    icon: "meister",
+  },
+  {
+    title: "Qualität ohne Kompromiss",
+    text: "Ausgewählte Produkte, klare Schritte. Was wir versprechen, wiederholen wir — Termin für Termin.",
+    icon: "qualitaet",
+  },
+  {
+    title: "Ruhe statt Lautstärke",
+    text: "Fokus, Zeit für Details und eine Atmosphäre, in der Sie durchatmen können.",
+    icon: "ruhe",
+  },
+] as const;
+---
+
+<section class="section trust trust--icons" id="vertrauen" aria-labelledby="trust-heading">
+  <div class="container">
+    <SectionHeading
+      eyebrow="Vorteile"
+      title="Handwerk, das man spürt — und sieht"
+      subtitle="Im Ruhrgebiet zu Hause, mit dem Anspruch einer Boutique: persönlich, präzise, diskret exzellent."
+      headingId="trust-heading"
+    />
+
+    <ul class="trust__grid" role="list">
+      {
+        pillars.map((p, i) => (
+          <li class="trust__card" data-reveal style={`--reveal-delay: ${80 + i * 100}ms`}>
+            <div class="trust__card-inner">
+              <div class="trust__icon" aria-hidden="true">
+                {p.icon === "meister" && (
+                  <svg class="trust__svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M14 18v16M10 22h8M30 14l8 8-8 8M22 30h12"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M8 38h32"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      opacity="0.35"
+                    />
+                  </svg>
+                )}
+                {p.icon === "qualitaet" && (
+                  <svg class="trust__svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M24 6l3.2 9.8H37l-8 5.8 3 9.6L24 29.6l-8.2 5.8 3-9.6-8-5.8h9.8L24 6z"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linejoin="round"
+                    />
+                    <path
+                      d="M18 34l4 4 10-10"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                )}
+                {p.icon === "ruhe" && (
+                  <svg class="trust__svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M14 28c0-8 4.5-14 10-14s10 6 10 14"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                    />
+                    <path
+                      d="M10 30h28"
+                      stroke="currentColor"
+                      stroke-width="2.2"
+                      stroke-linecap="round"
+                      opacity="0.4"
+                    />
+                    <circle cx="34" cy="14" r="3" stroke="currentColor" stroke-width="2.2" />
+                  </svg>
+                )}
+              </div>
+              <h3 class="trust__card-title">{p.title}</h3>
+              <p class="trust__card-text">{p.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .trust--icons :global(.section-heading) {
+    margin-bottom: var(--space-lg);
+  }
+
+  .trust__grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 560px) and (max-width: 767px) {
+    .trust__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .trust__grid .trust__card:nth-child(3) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 768px) {
+    .trust__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+    }
+
+    .trust__grid .trust__card:nth-child(3) {
+      grid-column: auto;
+    }
+  }
+
+  .trust__card {
+    margin: 0;
+    border-radius: var(--radius-md);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-line);
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 0.5s var(--ease-luxe),
+      box-shadow 0.5s var(--ease-luxe),
+      border-color 0.35s ease;
+  }
+
+  @media (hover: hover) {
+    .trust__card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lift);
+      border-color: rgba(28, 27, 25, 0.1);
+    }
+  }
+
+  .trust__card-inner {
+    padding: var(--space-lg);
+  }
+
+  .trust__icon {
+    width: 3.25rem;
+    height: 3.25rem;
+    margin-bottom: var(--space-md);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent);
+    background: var(--color-accent-soft);
+    border: 1px solid rgba(142, 123, 94, 0.18);
+  }
+
+  .trust__svg {
+    width: 1.85rem;
+    height: 1.85rem;
+  }
+
+  .trust__card-title {
+    margin: 0 0 var(--space-sm);
+    font-family: var(--font-display);
+    font-size: clamp(1.3rem, 2.1vw, 1.55rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .trust__card-text {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.62;
+    color: var(--color-ink-muted);
+  }
+</style>

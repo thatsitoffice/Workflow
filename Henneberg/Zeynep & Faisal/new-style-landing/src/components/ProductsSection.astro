@@ -1,0 +1,147 @@
+---
+import SectionHeading from "./SectionHeading.astro";
+import BookingButton from "./BookingButton.astro";
+import { SALON_IMAGES } from "../data/salon-images";
+
+const banner = SALON_IMAGES.productsBanner;
+---
+
+<section class="section products" id="produkte" aria-labelledby="products-heading">
+  <div class="container">
+    <div class="products__compose" data-reveal>
+      <div class="products__intro">
+        <SectionHeading
+          eyebrow="Produkte"
+          title="Redken im Salon — Pflege mit Substanz"
+          subtitle="Von intensiver Aufbau-Pflege bis zu Styling und Finish: Wir arbeiten mit klaren Profilinien und zeigen Ihnen im Salon, welche Texturen und Routinen zu Ihrer Haarstruktur passen — mitnehmen, was sich für Sie lohnt."
+          headingId="products-heading"
+        />
+        <div class="products__cta-wrap">
+          <BookingButton variant="ghost" />
+        </div>
+      </div>
+      <figure class="products__figure">
+        <img
+          class="products__img"
+          src={banner.src}
+          alt="Große Auswahl an Redken Haarpflege- und Stylingprodukten — im Salon erhältlich und zur Beratung"
+          width={banner.w}
+          height={banner.h}
+          loading="lazy"
+          decoding="async"
+        />
+      </figure>
+    </div>
+  </div>
+
+  <div class="container">
+    <p class="products__footer-lead lead" data-reveal>
+      Marken mit nachvollziehbaren Inhaltsstoffen — vor Ort beraten wir Sie zu Struktur, Pflege zu Hause und passenden Finish-Produkten.
+    </p>
+  </div>
+</section>
+
+<style>
+  .products__compose {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .products__intro {
+    position: relative;
+    z-index: 1;
+  }
+
+  .products__cta-wrap {
+    margin-top: var(--space-lg);
+  }
+
+  .products__figure {
+    margin: 0;
+    align-self: stretch;
+  }
+
+  .products__img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .products__footer-lead {
+    margin: var(--space-xl) 0 0;
+    max-width: 48rem;
+  }
+
+  @media (min-width: 900px) {
+    .products__compose {
+      display: grid;
+      grid-template-columns: 1fr;
+      align-items: center;
+      margin-bottom: var(--space-sm);
+      min-height: clamp(260px, 44vw, 500px);
+    }
+
+    .products__intro {
+      grid-column: 1;
+      grid-row: 1;
+      z-index: 2;
+      max-width: min(24rem, 46%);
+      align-self: center;
+      pointer-events: none;
+    }
+
+    .products__intro :global(a) {
+      pointer-events: auto;
+    }
+
+    .products__intro :global(.section-heading) {
+      margin-bottom: 0;
+    }
+
+    /* Schwarze Schrift; dezenter heller Glow nur für Lesbarkeit auf dunklen Flaschen */
+    .products__intro :global(h2.display-lg) {
+      color: var(--color-ink);
+      text-shadow:
+        0 0 1px rgba(244, 241, 235, 0.9),
+        0 0 14px rgba(244, 241, 235, 0.45);
+    }
+
+    .products__intro :global(.section-heading__sub) {
+      color: var(--color-ink-muted);
+      text-shadow:
+        0 0 1px rgba(244, 241, 235, 0.85),
+        0 0 12px rgba(244, 241, 235, 0.4);
+    }
+
+    .products__intro :global(.eyebrow) {
+      color: var(--color-ink);
+      text-shadow:
+        0 0 1px rgba(244, 241, 235, 0.8),
+        0 0 10px rgba(244, 241, 235, 0.35);
+    }
+
+    .products__cta-wrap {
+      margin-top: var(--space-md);
+    }
+
+    /* Bild: ~70 % Breite, horizontal eher mittig (leicht nach links für Overlap mit Text) */
+    .products__figure {
+      grid-column: 1;
+      grid-row: 1;
+      width: min(70%, 920px);
+      justify-self: center;
+      margin: 0;
+      transform: translateX(clamp(-1.25rem, -3.5vw, -0.25rem));
+    }
+
+    .products__img {
+      width: 100%;
+      height: auto;
+      max-height: min(520px, 52vw);
+      object-fit: cover;
+      /* Motiv: Produktgruppe etwas rechts vom Zentrum, linke Flaschen unter Schrift */
+      object-position: 62% 50%;
+    }
+  }
+</style>

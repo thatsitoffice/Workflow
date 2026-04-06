@@ -1,0 +1,690 @@
+---
+import BookingButton from "./BookingButton.astro";
+import { SITE } from "../data/site";
+import { getNavColumns } from "../data/nav";
+
+interface Props {
+  variant?: "default" | "overlay";
+  heroTone?: "dark" | "light";
+}
+
+const { variant = "default", heroTone = "dark" } = Astro.props;
+const isOverlay = variant === "overlay";
+const isOverlayLight = isOverlay && heroTone === "light";
+const isOverlayDark = isOverlay && !isOverlayLight;
+
+const bookingVariant = isOverlayDark ? "heroOutline" : "primary";
+/** Im Off-Canvas (dunkler Hintergrund): heller Button */
+const drawerBookingVariant = "on-dark";
+
+const { left: navLeft, right: navRight } = getNavColumns(Astro.url.pathname);
+const navDrawerItems = [...navLeft, ...navRight];
+
+const logoAlt = `${SITE.name} — ${SITE.tagline}, Startseite`;
+---
+
+<header
+  class:list={[
+    "site-header",
+    isOverlay && "site-header--overlay",
+    isOverlayLight && "site-header--overlay-light",
+  ]}
+  id="site-header"
+  data-overlay={isOverlay ? "true" : undefined}
+  data-hero-tone={isOverlay ? heroTone : undefined}
+>
+  <div class="site-header__inner container">
+    <nav class="site-header__nav-main" aria-label="Hauptnavigation">
+      <ul class="site-header__links site-header__links--start">
+        {
+          navLeft.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+
+      <a class="site-header__logo" href="/" aria-label={logoAlt}>
+        <img
+          src="/logo-zeynep-faisal.png"
+          alt=""
+          width="440"
+          height="155"
+          class="site-header__logo-img"
+          decoding="async"
+        />
+      </a>
+
+      <ul class="site-header__links site-header__links--end">
+        {
+          navRight.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="site-header__tools">
+      <button
+        type="button"
+        class="site-header__menu-toggle"
+        data-drawer-toggle
+        aria-expanded="false"
+        aria-controls="site-nav-drawer"
+        aria-label="Menü öffnen"
+      >
+        <svg
+          class="site-header__menu-icon"
+          width="26"
+          height="20"
+          viewBox="0 0 26 20"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <rect class="site-header__menu-line" x="0" y="1" width="26" height="2.25" rx="1.125"></rect>
+          <rect class="site-header__menu-line" x="0" y="9" width="26" height="2.25" rx="1.125"></rect>
+          <rect class="site-header__menu-line" x="0" y="17" width="26" height="2.25" rx="1.125"></rect>
+        </svg>
+      </button>
+      <div class="site-header__cta">
+        <BookingButton variant={bookingVariant} />
+      </div>
+    </div>
+  </div>
+</header>
+
+<div id="site-nav-drawer" class="site-header__drawer" inert aria-hidden="true">
+  <div class="site-header__drawer-backdrop" data-drawer-backdrop aria-hidden="true"></div>
+  <aside class="site-header__drawer-panel" role="dialog" aria-modal="true" aria-label="Menü">
+    <button type="button" class="site-header__drawer-close" data-drawer-close aria-label="Menü schließen">
+      <span class="site-header__drawer-close-x" aria-hidden="true">×</span>
+    </button>
+    <nav class="site-header__drawer-nav" aria-label="Hauptnavigation">
+      <p class="site-header__drawer-heading">Hauptmenü</p>
+      <ul class="site-header__drawer-list" role="list">
+        {
+          navDrawerItems.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="site-header__drawer-cta">
+        <BookingButton variant={drawerBookingVariant} />
+      </div>
+    </nav>
+  </aside>
+</div>
+
+<script>
+  import "../scripts/header-drawer";
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    /* Über Hauptinhalt (z. B. Preise-Hero mit negativem Margin) — Menü & Off-Canvas zuverlässig */
+    z-index: 500;
+    background: rgba(244, 241, 235, 0.82);
+    backdrop-filter: blur(16px) saturate(1.2);
+    -webkit-backdrop-filter: blur(16px) saturate(1.2);
+    border-bottom: 1px solid rgba(20, 19, 18, 0.05);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.65) inset;
+    transition:
+      background 0.45s var(--ease-luxe),
+      border-color 0.45s ease,
+      box-shadow 0.45s ease;
+  }
+
+  .site-header--overlay {
+    position: fixed;
+    left: 0;
+    right: 0;
+    z-index: 500;
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: none;
+  }
+
+  .site-header--overlay.site-header--overlay-light:not(.site-header--scrolled) {
+    border-bottom-color: rgba(45, 33, 24, 0.08);
+  }
+
+  .site-header--overlay.site-header--scrolled {
+    background: rgba(244, 241, 235, 0.92);
+    backdrop-filter: blur(18px) saturate(1.15);
+    -webkit-backdrop-filter: blur(18px) saturate(1.15);
+    border-bottom: 1px solid rgba(20, 19, 18, 0.06);
+    box-shadow: 0 8px 32px -20px rgba(20, 19, 18, 0.12);
+  }
+
+  /**
+   * Mobil / Tablet: keine transparente Leiste über dem Hero — immer volle Lesbarkeit
+   * (entspricht optisch dem „gescrollten“ Desktop-Overlay).
+   */
+  @media (max-width: 1023px) {
+    .site-header--overlay {
+      background: rgba(244, 241, 235, 0.96);
+      backdrop-filter: blur(18px) saturate(1.15);
+      -webkit-backdrop-filter: blur(18px) saturate(1.15);
+      border-bottom: 1px solid rgba(20, 19, 18, 0.07);
+      box-shadow: 0 8px 28px -18px rgba(20, 19, 18, 0.14);
+    }
+
+    .site-header--overlay .site-header__menu-toggle {
+      border-color: rgba(20, 19, 18, 0.16);
+      background: rgba(255, 252, 250, 0.96);
+      color: var(--color-ink);
+    }
+
+    .site-header--overlay .site-header__menu-toggle:hover {
+      border-color: rgba(20, 19, 18, 0.26);
+      background: #fff;
+    }
+  }
+
+  .site-header__inner {
+    position: relative;
+    min-height: 4.5rem;
+    padding-block: var(--space-sm);
+  }
+
+  /* Volle Breite unter dem Hero: Inhalt nicht unter Dynamic Island / Statusleiste */
+  .site-header--overlay .site-header__inner {
+    padding-top: max(var(--space-sm), env(safe-area-inset-top, 0px));
+  }
+
+  @media (min-width: 1024px) {
+    .site-header__inner {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto;
+      align-items: center;
+      gap: clamp(0.9rem, 2.4vw, 1.65rem);
+    }
+
+    .site-header__nav-main {
+      display: contents;
+    }
+
+    .site-header__links--start {
+      grid-column: 1;
+      justify-self: end;
+      align-self: center;
+    }
+
+    .site-header__logo {
+      grid-column: 2;
+      justify-self: center;
+      align-self: center;
+    }
+
+    .site-header__links--end {
+      grid-column: 3;
+      justify-self: start;
+      align-self: center;
+    }
+
+    .site-header__tools {
+      grid-column: 4;
+      justify-self: end;
+      align-self: center;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.45rem;
+    }
+
+    .site-header__menu-toggle {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .site-header__inner {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      flex-wrap: nowrap;
+      padding-block: var(--space-sm);
+      min-height: 3.65rem;
+    }
+
+    .site-header__nav-main {
+      display: flex;
+      align-items: center;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .site-header__links--start,
+    .site-header__links--end {
+      display: none !important;
+    }
+
+    .site-header__logo {
+      margin: 0;
+    }
+
+    .site-header__tools {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.45rem;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+
+    .site-header__menu-toggle {
+      display: flex;
+      position: relative;
+      z-index: 2;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+  }
+
+  .site-header__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: 1024px) {
+    .site-header__links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: clamp(1.15rem, 2.6vw, 2.15rem);
+      align-items: center;
+      font-size: clamp(0.82rem, 1.05vw, 0.95rem);
+    }
+  }
+
+  .site-header__links a {
+    text-decoration: none;
+    color: var(--color-ink);
+    transition: color 0.3s ease;
+  }
+
+  .site-header__links a:hover {
+    color: var(--color-accent);
+  }
+
+  .site-header--overlay:not(.site-header--overlay-light):not(.site-header--scrolled) .site-header__links a {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .site-header--overlay:not(.site-header--overlay-light):not(.site-header--scrolled) .site-header__links a:hover {
+    color: #fff;
+  }
+
+  .site-header--overlay.site-header--scrolled .site-header__links a {
+    color: var(--color-ink);
+  }
+
+  .site-header__logo {
+    flex-shrink: 0;
+    line-height: 0;
+    text-decoration: none;
+    transition:
+      transform 0.35s ease,
+      box-shadow 0.35s ease;
+  }
+
+  .site-header__logo:hover {
+    text-decoration: none;
+    transform: scale(1.02);
+  }
+
+  .site-header__logo-img {
+    height: clamp(2.25rem, 5vw, 2.65rem);
+    width: auto;
+    max-width: min(200px, 52vw);
+    object-fit: contain;
+    display: block;
+  }
+
+  /**
+   * Dunkles Hero: kein weißer Kasten mehr — PNG bleibt transparent.
+   * Leichte Kontur + Schatten, damit dunkles Logo auf dunklem Foto lesbar bleibt.
+   */
+  .site-header--overlay:not(.site-header--overlay-light):not(.site-header--scrolled) .site-header__logo-img {
+    filter: drop-shadow(0 0 0.5px rgba(255, 255, 255, 0.95)) drop-shadow(0 2px 14px rgba(0, 0, 0, 0.4));
+  }
+
+  .site-header--overlay.site-header--scrolled .site-header__logo-img {
+    filter: none;
+  }
+
+  @media (max-width: 1023px) {
+    .site-header--overlay:not(.site-header--overlay-light):not(.site-header--scrolled) .site-header__logo-img {
+      filter: none;
+    }
+  }
+
+  .site-header__cta {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .site-header__cta {
+      display: block;
+    }
+  }
+
+  .site-header--overlay.site-header--scrolled .site-header__cta :global(.btn--hero-outline) {
+    background: var(--color-ink);
+    color: #faf8f5;
+    border-color: var(--color-ink);
+    box-shadow: 0 10px 28px -12px rgba(20, 19, 18, 0.35);
+  }
+
+  .site-header--overlay.site-header--scrolled .site-header__cta :global(.btn--hero-outline:hover) {
+    background: var(--color-deep);
+    border-color: var(--color-deep);
+  }
+
+  /* —— Menü-Symbol: drei Striche —— */
+  /* display: Sichtbarkeit nur über Media Queries (Desktop: none !important oben), sonst überschreibt diese Regel das mobile display:flex */
+  .site-header__menu-toggle {
+    box-sizing: border-box;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 2.85rem;
+    height: 2.85rem;
+    padding: 0;
+    margin: 0;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    border-radius: var(--radius-pill);
+    background: rgba(8, 7, 6, 0.28);
+    color: #fff;
+    cursor: pointer;
+    transition:
+      border-color 0.25s ease,
+      background 0.25s ease,
+      color 0.25s ease;
+  }
+
+  .site-header__menu-icon {
+    display: block;
+    flex-shrink: 0;
+  }
+
+  .site-header__menu-line {
+    fill: currentColor;
+  }
+
+  .site-header__menu-toggle:hover {
+    border-color: rgba(255, 255, 255, 0.78);
+    background: rgba(8, 7, 6, 0.45);
+    color: #fff;
+  }
+
+  .site-header__menu-toggle:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .site-header--overlay.site-header--scrolled .site-header__menu-toggle {
+    border-color: rgba(20, 19, 18, 0.16);
+    background: rgba(255, 252, 250, 0.96);
+    color: var(--color-ink);
+  }
+
+  .site-header--overlay.site-header--scrolled .site-header__menu-toggle:hover {
+    border-color: rgba(20, 19, 18, 0.26);
+    background: #fff;
+  }
+
+  .site-header:not(.site-header--overlay) .site-header__menu-toggle {
+    border-color: rgba(20, 19, 18, 0.16);
+    background: rgba(255, 252, 250, 0.92);
+    color: var(--color-ink);
+  }
+
+  .site-header:not(.site-header--overlay) .site-header__menu-toggle:hover {
+    border-color: rgba(20, 19, 18, 0.24);
+    background: #fff;
+  }
+
+  /* —— Off-Canvas (nur unter 1024px Breite) —— */
+  .site-header__drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 600;
+    pointer-events: none;
+    visibility: hidden;
+    transition: visibility 0s linear 0.4s;
+  }
+
+  @media (min-width: 1024px) {
+    .site-header__drawer {
+      display: none !important;
+    }
+  }
+
+  .site-header__drawer.is-open {
+    pointer-events: auto;
+    visibility: visible;
+    transition-delay: 0s;
+    overscroll-behavior: none;
+  }
+
+  .site-header__drawer-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(10, 9, 8, 0.52);
+    backdrop-filter: blur(5px) saturate(1.1);
+    -webkit-backdrop-filter: blur(5px) saturate(1.1);
+    opacity: 0;
+    transition: opacity 0.38s var(--ease-luxe);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .site-header__drawer.is-open .site-header__drawer-backdrop {
+    opacity: 1;
+  }
+
+  .site-header__drawer-panel {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    /* Fallback-Kette: Safari/iOS und dynamische Viewport-Höhe */
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    min-height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    box-sizing: border-box;
+    padding: calc(env(safe-area-inset-top, 0px) + 3.5rem)
+      max(var(--space-lg), env(safe-area-inset-right, 0px))
+      max(var(--space-md), env(safe-area-inset-bottom, 0px))
+      max(var(--space-lg), env(safe-area-inset-left, 0px));
+    background: rgba(12, 11, 10, 0.97);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06);
+    transform: translateX(100%);
+    transition: transform 0.38s var(--ease-luxe);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mobil: Panel startet unter der Top-Bar (nicht oben festgesetzt) */
+  @media (max-width: 1023px) {
+    .site-header__drawer-panel {
+      top: var(--header-h);
+      height: calc(100dvh - var(--header-h));
+      min-height: unset;
+      max-height: unset;
+      padding-top: calc(env(safe-area-inset-top, 0px) + var(--space-lg));
+    }
+
+    .site-header__drawer-close {
+      top: calc(var(--header-h) + env(safe-area-inset-top, 0px) + var(--space-sm));
+    }
+  }
+
+  @supports (height: 100svh) {
+    .site-header__drawer-panel {
+      min-height: 100svh;
+      max-height: 100svh;
+    }
+  }
+
+  @supports (height: 100dvh) {
+    .site-header__drawer-panel {
+      min-height: 100dvh;
+      max-height: 100dvh;
+    }
+  }
+
+  .site-header__drawer.is-open .site-header__drawer-panel {
+    transform: translateX(0);
+  }
+
+  .site-header__drawer-close {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + var(--space-sm));
+    right: max(var(--space-sm), env(safe-area-inset-right, 0px));
+    z-index: 5;
+    width: 2.75rem;
+    height: 2.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.06);
+    color: #fff;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .site-header__drawer-close:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.55);
+  }
+
+  .site-header__drawer-close:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  .site-header__drawer-close-x {
+    font-size: 1.65rem;
+    line-height: 1;
+    font-weight: 300;
+    margin-top: -0.08em;
+  }
+
+  .site-header__drawer-heading {
+    flex-shrink: 0;
+    margin: 0 0 var(--space-sm);
+    padding: 0;
+    font-family: var(--font-body);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.38);
+  }
+
+  .site-header__drawer-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
+  .site-header__drawer-list li {
+    flex-shrink: 0;
+  }
+
+  .site-header__drawer-list a {
+    display: flex;
+    align-items: center;
+    min-height: max(3.35rem, 44px);
+    padding: 0.65rem 0;
+    font-size: max(0.88rem, 16px);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    transition: color 0.2s ease, padding-left 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .site-header__drawer-list a:hover,
+  .site-header__drawer-list a:active {
+    color: #fff;
+    padding-left: 0.2rem;
+  }
+
+  .site-header__drawer-nav {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .site-header__drawer-cta {
+    flex: 0 0 auto;
+    margin-top: auto;
+    padding-top: var(--space-lg);
+    padding-bottom: max(var(--space-sm), env(safe-area-inset-bottom, 0px));
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .site-header__drawer-cta :global(.btn) {
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+    min-height: 3.35rem;
+    font-size: max(0.78rem, 14px);
+    padding-block: 1rem;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-header__drawer,
+    .site-header__drawer-backdrop,
+    .site-header__drawer-panel {
+      transition-duration: 0.01ms;
+    }
+  }
+</style>

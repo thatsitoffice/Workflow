@@ -1,0 +1,150 @@
+---
+import type { PriceCategory } from "../data/pricing";
+
+interface Props {
+  category: PriceCategory;
+  /** Stagger für Scroll-Reveal (ms) */
+  revealDelayMs?: number;
+}
+
+const { category, revealDelayMs = 0 } = Astro.props;
+---
+
+<article
+  class="price-cat card"
+  id={category.id}
+  data-catalog-group={category.catalogGroup}
+  data-reveal
+  style={revealDelayMs ? `--reveal-delay: ${revealDelayMs}ms` : undefined}
+>
+  <h2 class="display-md price-cat__title">{category.title}</h2>
+  {category.intro && <p class="price-cat__intro muted">{category.intro}</p>}
+  <div class="price-cat__table-wrap">
+    <table class="price-table">
+      <thead>
+        <tr>
+          <th scope="col">Leistung</th>
+          <th scope="col">Dauer</th>
+          <th scope="col">Preis</th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          category.rows.map((r) => (
+            <tr>
+              <td>
+                {r.name}
+                {r.note && (
+                  <span class="price-cat__note muted">
+                    <br />
+                    <span class="price-cat__note-inner">{r.note}</span>
+                  </span>
+                )}
+              </td>
+              <td>{r.duration ?? "—"}</td>
+              <td>{r.price}</td>
+            </tr>
+          ))
+        }
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<style>
+  .price-cat {
+    margin: 0;
+    scroll-margin-top: calc(var(--header-h) + var(--space-md));
+  }
+
+  .price-cat__title {
+    font-size: clamp(1.35rem, 2.5vw, 1.75rem);
+    margin: 0 0 var(--space-sm);
+  }
+
+  .price-cat__intro {
+    margin: 0 0 var(--space-md);
+    font-size: 0.95rem;
+    line-height: 1.55;
+    max-width: 42rem;
+  }
+
+  .price-cat__table-wrap {
+    overflow-x: auto;
+    margin-inline: 0;
+    padding-inline: 0;
+  }
+
+  .price-table th:nth-child(2),
+  .price-table td:nth-child(2) {
+    white-space: nowrap;
+    width: 1%;
+  }
+
+  .price-table th:first-child,
+  .price-table td:first-child {
+    padding-right: var(--space-sm);
+    line-height: 1.5;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+
+  .price-table th:last-child,
+  .price-table td:last-child {
+    text-align: right;
+  }
+
+  /* Mobil: Dauer & Preis mit mehr Luft; Leistung darf ruhig 2–3 Zeilen einnehmen */
+  @media (max-width: 640px) {
+    .price-cat__table-wrap {
+      margin-inline: calc(-1 * var(--space-xs));
+      padding-inline: var(--space-xs);
+    }
+
+    .price-table {
+      font-size: 0.9rem;
+    }
+
+    .price-table th,
+    .price-table td {
+      padding: 0.7rem 0;
+      vertical-align: top;
+    }
+
+    .price-table th {
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      padding-bottom: 0.55rem;
+    }
+
+    .price-table th:first-child,
+    .price-table td:first-child {
+      padding-right: 0.85rem;
+      line-height: 1.48;
+    }
+
+    .price-table th:nth-child(2),
+    .price-table td:nth-child(2) {
+      width: auto;
+      min-width: 6.25rem;
+      padding-left: 0.4rem;
+      padding-right: 0.85rem;
+    }
+
+    .price-table th:last-child,
+    .price-table td:last-child {
+      padding-left: 0.65rem;
+      min-width: 5.25rem;
+    }
+  }
+
+  .price-cat__note {
+    font-size: 0.82rem;
+    font-weight: 400;
+  }
+
+  .price-cat__note-inner {
+    display: inline-block;
+    margin-top: 0.2rem;
+  }
+</style>

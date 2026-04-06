@@ -1,0 +1,117 @@
+---
+/**
+ * Vollbreite Szene + Glassmorphism-Panel (inspiriert von Spa-„Benefits“-Layern)
+ */
+import { SALON_IMAGES } from "../data/salon-images";
+
+const bg = SALON_IMAGES.feature;
+---
+
+<section class="feature-glass section section--flush" aria-labelledby="feature-glass-heading">
+  <div class="feature-glass__bg">
+    <img
+      class="feature-glass__img"
+      src={bg.src}
+      alt=""
+      width={bg.w}
+      height={bg.h}
+      loading="lazy"
+      decoding="async"
+    />
+    <div class="feature-glass__dim" aria-hidden="true"></div>
+  </div>
+  <div class="feature-glass__grid container">
+    <div class="feature-glass__spacer" aria-hidden="true"></div>
+    <div class="feature-glass__panel" data-reveal>
+      <p class="eyebrow" style="color: rgba(250,248,245,0.75);">Salon</p>
+      <h2 id="feature-glass-heading" class="feature-glass__title">
+        Ruhe ist Teil<br />der Dienstleistung
+      </h2>
+      <p class="feature-glass__text">
+        Kein lautes „Rein-Raus“: Wir nehmen uns Zeit für Beratung, Farbkonzept und Finish — damit Sie den Termin nicht
+        nur wahrnehmen, sondern genießen.
+      </p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section--flush {
+    padding-block: 0;
+  }
+
+  .feature-glass {
+    position: relative;
+    min-height: min(72svh, 820px);
+    display: flex;
+    align-items: center;
+    padding-block: clamp(2.25rem, 8vh, 5rem);
+  }
+
+  @supports not (min-height: 72svh) {
+    .feature-glass {
+      min-height: min(72vh, 820px);
+    }
+  }
+
+  .feature-glass__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .feature-glass__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 35%;
+  }
+
+  .feature-glass__dim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, rgba(20, 19, 18, 0.72) 0%, rgba(20, 19, 18, 0.35) 48%, transparent 78%);
+  }
+
+  .feature-glass__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    gap: var(--space-lg);
+    align-items: center;
+    min-height: min(58vh, 640px);
+  }
+
+  @media (min-width: 880px) {
+    .feature-glass__grid {
+      grid-template-columns: 1fr min(26rem, 42%);
+    }
+  }
+
+  .feature-glass__panel {
+    padding: clamp(var(--space-md), 4vw, var(--space-lg)) clamp(var(--space-md), 5vw, var(--space-xl));
+    border-radius: var(--radius-lg);
+    background: rgba(255, 252, 250, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(18px) saturate(1.2);
+    -webkit-backdrop-filter: blur(18px) saturate(1.2);
+    box-shadow: 0 24px 60px -24px rgba(0, 0, 0, 0.35);
+  }
+
+  .feature-glass__title {
+    margin: 0 0 var(--space-md);
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.85rem, 4vw, 2.75rem);
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    color: #faf8f5;
+  }
+
+  .feature-glass__text {
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.7;
+    color: rgba(250, 248, 245, 0.82);
+  }
+</style>

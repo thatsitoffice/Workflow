@@ -1,0 +1,363 @@
+---
+/**
+ * Google-Bewertungswidget:
+ * - Mit GOOGLE_PLACES_API_KEY + Place-ID (Env oder src/data/google.ts) werden echte Texte beim Build geladen.
+ * - Ohne API: Summe aus GOOGLE_REVIEWS_FALLBACK + Link „Alle Bewertungen bei Google“ (CID).
+ */
+import { GOOGLE, GOOGLE_REVIEWS_FALLBACK } from "../data/google";
+import { fetchPlaceReviewData } from "../lib/googlePlaces";
+
+const apiKey = import.meta.env.GOOGLE_PLACES_API_KEY as string | undefined;
+const placeIdFromEnv = import.meta.env.GOOGLE_PLACE_ID as string | undefined;
+const placeId = (placeIdFromEnv || GOOGLE.placeId || "").trim();
+
+const live = await fetchPlaceReviewData(apiKey, placeId);
+
+const mapsHref =
+  live?.googleMapsUri ||
+  `https://www.google.com/maps?cid=${GOOGLE.mapsCid}&hl=de`;
+
+const displayName = live?.displayName || "Google Bewertungen";
+const rating = live && live.rating > 0 ? live.rating : GOOGLE_REVIEWS_FALLBACK.rating;
+const userRatingCount =
+  live && live.userRatingCount > 0
+    ? live.userRatingCount
+    : GOOGLE_REVIEWS_FALLBACK.userRatingCount;
+
+const reviews = live?.reviews?.length ? live.reviews : [];
+const hasLiveReviews = reviews.length > 0;
+const ratingLabel = rating.toFixed(1).replace(".", ",");
+---
+
+<div class="g-rating g-rating--premium">
+  <div class="g-rating__head" data-reveal style="--reveal-delay: 0ms">
+    <div class="g-rating__brand" aria-hidden="true">
+      <svg class="g-rating__g" width="28" height="28" viewBox="0 0 48 48" aria-hidden="true">
+        <path
+          fill="#4285F4"
+          d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+        ></path>
+        <path
+          fill="#34A853"
+          d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6C44.43 39.29 48 34.22 48 24c0-1.64-.15-3.19-.43-4.65z"
+        ></path>
+        <path
+          fill="#FBBC05"
+          d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+        ></path>
+        <path
+          fill="#EA4335"
+          d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+        ></path>
+      </svg>
+    </div>
+    <div class="g-rating__meta">
+      <p class="g-rating__title">{displayName}</p>
+      <div class="g-rating__row">
+        <div class="stars" role="img" aria-label={`Durchschnitt ${ratingLabel} von 5 Sternen`}>
+          {
+            [1, 2, 3, 4, 5].map((i) => (
+              <span class:list={["stars__i", i <= Math.round(rating) && "stars__i--on"]} aria-hidden="true">
+                ★
+              </span>
+            ))
+          }
+        </div>
+        <span class="g-rating__score">{ratingLabel}</span>
+        <span class="g-rating__count muted">
+          {userRatingCount.toLocaleString("de-DE")} Bewertungen
+        </span>
+      </div>
+      {
+        !hasLiveReviews && import.meta.env.DEV && (
+          <p class="g-rating__hint muted">
+            Entwicklung: Bewertungstexte beim Build laden mit <code>GOOGLE_PLACES_API_KEY</code> +{" "}
+            <code>GOOGLE_PLACE_ID</code> (Places API New in der Google Cloud Console aktivieren).
+          </p>
+        )
+      }
+      {
+        !hasLiveReviews && !import.meta.env.DEV && (
+          <p class="g-rating__hint muted">
+            Alle aktuellen Gästestimmen und die vollständige Übersicht finden Sie direkt bei Google — ein Klick auf den
+            Button unten.
+          </p>
+        )
+      }
+    </div>
+  </div>
+
+  {
+    hasLiveReviews && (
+      <ul class="g-rating__list" role="list">
+        {reviews.map((r, i) => (
+          <li class="g-rating__card card" data-reveal style={`--reveal-delay: ${(i + 1) * 85}ms`}>
+            <div class="g-rating__card-top">
+              {r.authorPhoto ? (
+                <img
+                  class="g-rating__avatar"
+                  src={r.authorPhoto}
+                  alt=""
+                  width="40"
+                  height="40"
+                  loading="lazy"
+                  decoding="async"
+                  referrerpolicy="no-referrer"
+                />
+              ) : (
+                <span class="g-rating__avatar g-rating__avatar--ph" aria-hidden="true" />
+              )}
+              <div>
+                {r.authorUri ? (
+                  <a class="g-rating__author" href={r.authorUri} target="_blank" rel="noopener noreferrer">
+                    {r.author}
+                  </a>
+                ) : (
+                  <span class="g-rating__author">{r.author}</span>
+                )}
+                {r.relativeTime && <p class="g-rating__time muted">{r.relativeTime}</p>}
+              </div>
+              <div class="g-rating__mini-stars" aria-label={`${r.rating} von 5 Sternen`}>
+                {Array.from({ length: 5 }, (_, i) => (
+                  <span class:list={["stars__i stars__i--sm", i < r.rating && "stars__i--on"]} aria-hidden="true">
+                    ★
+                  </span>
+                ))}
+              </div>
+            </div>
+            <blockquote class="g-rating__quote">
+              <p class="g-rating__text">{r.text}</p>
+            </blockquote>
+          </li>
+        ))}
+      </ul>
+    )
+  }
+
+  <div
+    class="g-rating__actions"
+    data-reveal
+    style={`--reveal-delay: ${hasLiveReviews ? 100 + reviews.length * 85 : 120}ms`}
+  >
+    <a class="btn btn--ghost g-rating__all" href={mapsHref} target="_blank" rel="noopener noreferrer">
+      Alle Google-Bewertungen ansehen
+      <span aria-hidden="true">↗</span>
+    </a>
+    <p class="g-rating__legal muted">
+      Bewertungen stammen von Google. Angezeigte Auswahl kann gekürzt sein — vollständige Historie über den Link.
+    </p>
+  </div>
+</div>
+
+<style>
+  .g-rating {
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  .g-rating__head {
+    display: flex;
+    gap: var(--space-md);
+    align-items: flex-start;
+    padding: var(--space-lg);
+    background: var(--color-bg-elevated);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    margin-bottom: var(--space-lg);
+  }
+
+  .g-rating__brand {
+    flex-shrink: 0;
+    padding: 0.35rem;
+  }
+
+  .g-rating__g {
+    display: block;
+  }
+
+  .g-rating__title {
+    margin: 0 0 var(--space-xs);
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .g-rating__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .g-rating__score {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+  }
+
+  .g-rating__count {
+    font-size: 0.875rem;
+  }
+
+  .g-rating__hint {
+    margin: var(--space-sm) 0 0;
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .g-rating__hint code {
+    font-size: 0.75em;
+    background: var(--color-accent-soft);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+
+  .stars {
+    display: inline-flex;
+    gap: 0.08rem;
+    letter-spacing: 0;
+  }
+
+  .stars__i {
+    color: rgba(28, 27, 25, 0.2);
+    font-size: 1.15rem;
+    line-height: 1;
+  }
+
+  .stars__i--on {
+    color: var(--color-star);
+  }
+
+  .stars__i--sm {
+    font-size: 0.85rem;
+  }
+
+  .g-rating__list {
+    list-style: none;
+    margin: 0 0 var(--space-lg);
+    padding: 0;
+    display: grid;
+    gap: var(--space-md);
+  }
+
+  @media (min-width: 768px) {
+    .g-rating__list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .g-rating__list {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .g-rating__card {
+    margin: 0;
+    text-align: left;
+  }
+
+  .g-rating__card-top {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-sm);
+    align-items: start;
+    margin-bottom: var(--space-sm);
+  }
+
+  .g-rating__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .g-rating__avatar--ph {
+    background: var(--color-line);
+    display: block;
+  }
+
+  .g-rating__author {
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+
+  .g-rating__author:hover {
+    text-decoration: underline;
+  }
+
+  .g-rating__time {
+    margin: 0.1rem 0 0;
+    font-size: 0.75rem;
+  }
+
+  .g-rating__mini-stars {
+    display: flex;
+    gap: 0;
+  }
+
+  .g-rating__quote {
+    margin: 0;
+  }
+
+  .g-rating__text {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: var(--color-ink-muted);
+  }
+
+  .g-rating__actions {
+    text-align: center;
+  }
+
+  .g-rating__all {
+    margin-bottom: var(--space-sm);
+  }
+
+  .g-rating__legal {
+    margin: 0 auto;
+    max-width: 36rem;
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  /* Editorial: leicht versetzte Karten wie Mood-Board */
+  .g-rating--premium .g-rating__card {
+    transition:
+      transform 0.5s var(--ease-luxe),
+      box-shadow 0.5s var(--ease-luxe);
+  }
+
+  .g-rating--premium .g-rating__card:nth-child(1) {
+    transform: rotate(-1.4deg);
+  }
+
+  .g-rating--premium .g-rating__card:nth-child(2) {
+    transform: rotate(1deg);
+  }
+
+  .g-rating--premium .g-rating__card:nth-child(3) {
+    transform: rotate(-0.6deg);
+  }
+
+  .g-rating--premium .g-rating__card:nth-child(n + 4) {
+    transform: rotate(0.5deg);
+  }
+
+  @media (hover: hover) {
+    .g-rating--premium .g-rating__card:hover {
+      transform: rotate(0deg) translateY(-6px);
+      z-index: 3;
+      box-shadow: var(--shadow-lift);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .g-rating--premium .g-rating__card {
+      transform: none;
+    }
+  }
+</style>

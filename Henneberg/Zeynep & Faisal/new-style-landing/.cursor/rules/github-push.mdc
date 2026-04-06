@@ -1,0 +1,11 @@
+---
+description: Nach Änderungen immer zu GitHub pushen (origin/main)
+alwaysApply: true
+---
+
+# GitHub: direkt pushen
+
+- Nach **abgeschlossenen** Code-/Content-Änderungen in diesem Repo: **`git add`**, **`git commit`** mit aussagekräftiger Message (Deutsch), dann **`git push origin main`** (bzw. aktueller Branch/Remote).
+- Keine Aufgabe nur mit lokalem Stand beenden, wenn Push möglich ist — außer der Nutzer will ausdrücklich keinen Push.
+- Wenn es nichts zu committen gibt: nichts pushen; wenn nur uncommittete Änderungen: erst committen, dann pushen.
+- Bei Push-Fehlern: Ursache prüfen (Remote, Auth, Konflikt) und beheben oder Nutzer informieren.
